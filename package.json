@@ -1,0 +1,30 @@
+{
+  "name": "portal-api",
+  "version": "1.0.0",
+  "description": "The API for the greatest identity management platform in the universe.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/bykreative/portal/portal-api"
+  },
+  "keywords": [
+    "portal",
+    "api",
+    "account",
+    "id"
+  ],
+  "author": "Department of Infrastructure of Kreative",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "pg": "^7.18.2",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^5.21.5"
+  }
+}
