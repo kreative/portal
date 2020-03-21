@@ -26,8 +26,6 @@ exports.signup = (req, res) => {
         .then(account => {
             res.json({
                 status: 202,
-                time: Date.now(),
-                message: "account created successfully",
                 data: {
                     username: account.username,
                     fname: account.fname,
