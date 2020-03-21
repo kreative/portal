@@ -7,7 +7,7 @@ const server = express();
 const PORT = process.env.SERVERPORT || 3000;
 const DB = require("./config/db").sequelize;
 
-const signup = require("./controllers/Signup");
+const accounts = require("./controllers/AccountsControllers");
 
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
@@ -23,6 +23,7 @@ DB.authenticate()
   .catch(err => console.error('Connection to Portal DB failed', err));
 
 server.get('/', (req, res) => res.send("Welcome to Portal"));
-server.post('/accounts/signup', (req, res) => signup.signup(req, res));
+server.post('/accounts/signup', (req, res) => accounts.signup(req, res));
+server.post('/accounts/login', (req, res) => accounts.login(req, res));
 
 server.listen(PORT, '127.0.0.1', console.log("Portal Server is ready when you are!"));
