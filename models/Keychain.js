@@ -2,10 +2,13 @@ const Sequelize = require("sequelize");
 const DB = require("../config/db").sequelize;
 
 const Keychain = DB.define('keychain', {
-    ksn: {
+    ccn: {
         type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false
+    },
+    ksn: {
+        type: Sequelize.BIGINT,
     },
     username: {
         type: Sequelize.TEXT,
