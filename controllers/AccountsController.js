@@ -10,6 +10,7 @@ exports.signup = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const createdat = Date.now();
+    const aidn = req.body.AIDN;
 
     const salt = bcrypt.genSaltSync(12);
     const bpassword = bcrypt.hashSync(password, salt);
@@ -24,8 +25,12 @@ exports.signup = (req, res) => {
             bpassword,
             createdat
         })
-        .then(account => res.json({status: 202}))
-        .catch(error => res.json({status: 505}));
+        .then(account => {
+            generateKeychain(account.ksn, aidn)
+            .then(key => res.json({status: 202, data: key}))
+            .catch(error => res.json({status: 505, data: error}));
+        })
+        .catch(error => res.json({status: 505, data: error}));
     });
 };
 
@@ -45,12 +50,11 @@ exports.login = (req, res) => {
                 if (result) {
                     generateKeychain(account.ksn, aidn)
                     .then(key => res.json({status: 202, data: key}))
+                    .catch(error => res.json({status: 505, data: error}));
                 }
                 else res.json({status: 406});
             })
-            .catch(error => {
-                res.json({status: 505, data: error}
-            }));
+            .catch(error => res.json({status: 505, data: error}));
         }
     });
 };
