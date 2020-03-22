@@ -10,29 +10,22 @@ const Keychain = DB.define('keychain', {
     ksn: {
         type: Sequelize.BIGINT,
     },
-    username: {
-        type: Sequelize.TEXT,
+    aidn: {
+        type: Sequelize.BIGINT,
         allowNull: false,
-        unique: true
     },
-    fname: {
+    key: {
         type: Sequelize.TEXT,
         allowNull: false
     },
-    lname: {
-        type: Sequelize.TEXT,
+    expired: {
+        type: Sequelize.BOOLEAN,
         allowNull: false
     },
-    email: {
-          type: Sequelize.TEXT,
-          allowNull: false,
-          unique: true
-    },
-    bpassword: {
-        type: Sequelize.TEXT,
+    createdat: {
+        type: Sequelize.BIGINT,
         allowNull: false
-    },
-    createdat: Sequelize.BIGINT
+    }
 }, {
     timestamps: false
 });
