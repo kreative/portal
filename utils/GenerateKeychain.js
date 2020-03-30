@@ -3,7 +3,8 @@ const generateCCN = require("../utils/GenerateCCN");
 const Keychain = require("../models/KeychainModel");
 const jwt = require("jsonwebtoken");
 
-const SECRET = process.env.KEYCHAIN_SECURITY_CODE;
+const rawSecret = process.env.KEYCHAIN_SECURITY_CODE;
+const SECRET = new Buffer(rawSecret, 'base64');
 
 const generateKeychain = (ksn, aidn) => {
     const time = Date.now();

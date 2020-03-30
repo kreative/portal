@@ -1,0 +1,25 @@
+body {
+    background: #FCFCFC;
+}
+
+.outer {
+    margin-top: 5%;
+    width: 100%; 
+    text-align: center;
+}
+
+.action-box {
+    width: 25%;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: white;
+    border: 2px solid #E4E4E4;
+    border-radius: 6px;
+    text-align: left;
+}
+
+#kreativelogo {
+    fill: black;
+    margin-bottom: 15px;
+}

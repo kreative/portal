@@ -1,7 +1,25 @@
+const bcrypt = require("bcryptjs");
+const Account = require("../models/AccountModel");
+const Keychain = require("../models/KeychainModel");
 const generateKSN = require("../utils/GenerateKSN");
 const generateKeychain = require("../utils/GenerateKeychain");
-const Account = require("../models/AccountModel");
-const bcrypt = require("bcryptjs");
+const postage = require("../utils/PostageUtils");
+
+exports.getLoginPage = (req, res) => {
+    const appchain = req.query.appchain;
+};
+
+
+exports.getSignupPage = (req, res) => {
+
+};
+
+
+// this is going to essentially be what get's sent back if
+// the key is valid, as the verifyKey middleware will run
+// before this controller is run
+exports.verify = (req, res) => res.status(202).json({status: 202});
+
 
 exports.signup = (req, res) => {
     const username = req.body.username;
@@ -25,15 +43,29 @@ exports.signup = (req, res) => {
             bpassword,
             createdat
         })
+        .catch(err => {
+            console.log(err)
+            if (err.name === "SequelizeUniqueConstraintError") {
+                res.status(500).json({status: 500, data: {errorCode: "email_inuse"}});
+            }
+            else {
+                res.status(500).json({status: 500, data: err});
+            }
+        })
         .then(account => {
             generateKeychain(account.ksn, aidn)
-            .then(key => res.json({status: 202, data: key}))
-            .catch(error => res.json({status: 505, data: error}));
-        })
-        .catch(error => res.json({status: 505, data: error}));
+            .catch(err => res.status(500).json({status: 500, data: err}))
+            .then(key => {
+                try {
+                    postage.sendWelcomeEmail(account.fname, account.email);
+                }
+                finally {
+                    res.status(202).json({status: 202, data: key});
+                }
+            });
+        });
     });
 };
-
 
 
 exports.login = (req, res) => {
@@ -43,22 +75,30 @@ exports.login = (req, res) => {
 
     Account.findOne({where: {username}})
     .then(account => {
-        if (account === null) res.json({status: 404});
+        if (account === null) res.status(44).json({status: 404});
         else {
             bcrypt.compare(password, account.bpassword)
+            .catch(err => res.status(500).json({status: 500, data: err}))
             .then(result => {
                 if (result) {
                     generateKeychain(account.ksn, aidn)
-                    .then(key => res.json({status: 202, data: key}))
-                    .catch(error => res.json({status: 505, data: error}));
+                    .catch(err => res.status(500).json({status: 500, data: err}))
+                    .then(key => res.status(202).json({status: 202, data: key}));
                 }
-                else res.json({status: 406});
-            })
-            .catch(error => res.json({status: 505, data: error}));
+                else res.status(406).json({status: 406});
+            });
         }
     });
 };
 
+
+exports.logout = (req, res) => {
+    const ccn = res.locals.ccn;
+
+    Keychain.update({expired: true},{where: {ccn}})
+    .catch(err => res.status(500).json({status: 500}))
+    .then(update => res.status(202).json({status: 202}));
+};
 
 // this method will be used by the client to verify that the username is unique
 // before sending over all the data to the signup method
