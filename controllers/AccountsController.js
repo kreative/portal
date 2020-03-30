@@ -15,6 +15,16 @@ exports.getSignupPage = (req, res) => {
 };
 
 
+exports.getRequestResetPasswordPage = (req, res) => {
+
+};
+
+
+exports.getResetPasswordPage = (req, res) => {
+
+};
+
+
 // this is going to essentially be what get's sent back if
 // the key is valid, as the verifyKey middleware will run
 // before this controller is run
@@ -83,7 +93,14 @@ exports.login = (req, res) => {
                 if (result) {
                     generateKeychain(account.ksn, aidn)
                     .catch(err => res.status(500).json({status: 500, data: err}))
-                    .then(key => res.status(202).json({status: 202, data: key}));
+                    .then(key => {
+                        try {
+                            postage.sendLoginNotificationEmail(account.fname, account.email, {});
+                        }
+                        finally {
+                            res.status(202).json({status: 202, data: key});
+                        }
+                    });
                 }
                 else res.status(406).json({status: 406});
             });
@@ -98,6 +115,16 @@ exports.logout = (req, res) => {
     Keychain.update({expired: true},{where: {ccn}})
     .catch(err => res.status(500).json({status: 500}))
     .then(update => res.status(202).json({status: 202}));
+};
+
+
+exports.requestPasswordReset = (req, res) => {
+
+};
+
+
+exports.resetPassword = (req, res) => {
+
 };
 
 // this method will be used by the client to verify that the username is unique

@@ -20,3 +20,21 @@ exports.sendWelcomeEmail = (fname, email) => {
         return body;
     });
 }
+
+// still need to add location information using ip info into the actual email
+exports.sendLoginNotificationEmail = (fname, email, ipinfo, timestamp) => {
+    const data = {
+        from: 'Portal notify@portal.kreativemail.com',
+        to: email,
+        subject: "Did you just login?",
+        html: fname + ",<br><br> Your account was just logged into."
+    }
+
+    mail.messages().send(data, (err, body) => {
+        if (err) {
+            console.log(err);
+        }
+
+        return body;
+    });
+}
