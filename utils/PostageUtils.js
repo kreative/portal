@@ -6,20 +6,20 @@ exports.sendWelcomeEmail = (fname, email) => {
         to: email,
         reply_to: "armaan@kreative.im",
         subject: 'Welcome to Kreative',
-        html: "Welcome " + fname + ",<br><br>You just created an account with Kreative using Portal, and we couldn't be happier.<br><br>Talk to you soon,<br>Armaan"
+        html: "Welcome "+fname+",<br><br>You just created an account with Kreative using Portal, and we couldn't be happier.<br><br>Talk to you soon,<br>Armaan"
     }
     
     mail.messages().send(data, (err, body) => {
         if (err) {
             // as the calling controller method (accounts.signup)
             // will not be handling an error, it should only be logged
-            console.log(err)
+            throw new Error(err);
         }
         // the calling method will probably not use this
         // but it's there if need be
         return body;
     });
-}
+};
 
 // still need to add location information using ip info into the actual email
 exports.sendLoginNotificationEmail = (fname, email, ipinfo, timestamp) => {
@@ -27,14 +27,30 @@ exports.sendLoginNotificationEmail = (fname, email, ipinfo, timestamp) => {
         from: 'Portal notify@portal.kreativemail.com',
         to: email,
         subject: "Did you just login?",
-        html: fname + ",<br><br> Your account was just logged into."
+        html: fname+",<br><br> Your account was just logged into."
     }
 
     mail.messages().send(data, (err, body) => {
         if (err) {
-            console.log(err);
+            throw new Error(err);
         }
-
         return body;
     });
-}
+};
+
+exports.sendPasswordResetEmail = (email, resetToken, fname) => {
+    const resetLink = "https://portal.kreative.im/resetpassword?token="+resetToken;
+    const data = {
+        from: 'Portal notify@portal.kreativemail.com',
+        to: email,
+        subject: "Reset your password "+fname,
+        html: "Hi "+fname+",<br><br><a href="+resetLink+">Click here to reset your password</a><br><br>"
+    };
+
+    mail.messages().send(data, (err, body) => {
+        if (err) {
+            throw new Error(err);
+        }
+        return body;
+    });
+};

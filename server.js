@@ -1,14 +1,13 @@
 require('dotenv').config();
 
-const path          = require('path'); 
-const express       = require('express');
-const bodyParser    = require('body-parser');
-const exphbs        = require('express-handlebars');
-const useragent     = require("express-useragent");
-const server        = express();
-const PORT          = process.env.SERVERPORT || 3000;
-const DB            = require("./config/db").sequelize;
-
+const path = require('path'); 
+const express = require('express');
+const bodyParser = require('body-parser');
+const exphbs = require('express-handlebars');
+const useragent = require("express-useragent");
+const server = express();
+const PORT = process.env.SERVERPORT || 3000;
+const DB = require("./config/db").sequelize;
 
 const accounts = require("./controllers/AccountsController");
 const appchains = require("./controllers/AppchainsController");
@@ -50,6 +49,9 @@ server.post('/api/accounts/signup', (req, res) => accounts.signup(req, res));
 server.post('/api/accounts/login', (req, res) => accounts.login(req, res));
 server.post('/api/accounts/logout', verifyKey, (req, res) => accounts.logout(req, res));
 server.post('/api/accounts/verify', verifyKey, (req, res) => accounts.verify(req, res));
+server.post('/api/accounts/reset_token/username', (req, res) => accounts.requestPasswordResetUsername(req, res));
+server.post('/api/accounts/reset_token/email', (req, res) => accounts.requestPasswordResetEmail(req, res));
+server.post('/api/accounts/resetpassword', (req, res) => accounts.resetPassword(req, res));
 
 // appchains routes
 server.post('/api/appchains', (req, res) => appchains.createAppchain(req, res));

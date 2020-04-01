@@ -3,6 +3,7 @@ const Account = require("../models/AccountModel");
 const Keychain = require("../models/KeychainModel");
 const generateKSN = require("../utils/GenerateKSN");
 const generateKeychain = require("../utils/GenerateKeychain");
+const createResetToken = require("../utils/CreateResetToken");
 const postage = require("../utils/PostageUtils");
 
 exports.getLoginPage = (req, res) => {
@@ -85,7 +86,7 @@ exports.login = (req, res) => {
 
     Account.findOne({where: {username}})
     .then(account => {
-        if (account === null) res.status(44).json({status: 404});
+        if (account === null) res.status(404).json({status: 404});
         else {
             bcrypt.compare(password, account.bpassword)
             .catch(err => res.status(500).json({status: 500, data: err}))
@@ -118,8 +119,55 @@ exports.logout = (req, res) => {
 };
 
 
-exports.requestPasswordReset = (req, res) => {
+exports.requestPasswordResetUsername = (req, res) => {
+    const username = req.body.cred;
 
+    Account.findOne({where: {username}})
+    .then(account => {
+        console.log(account)
+        if (account === null) {
+            res.json({status: 404, data: "internal_server_error"});
+        }
+        else {
+            createResetToken(account.ksn)
+            .catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
+            .then(resetToken => {
+                try {
+                    postage.sendPasswordResetEmail(userEmail, resetToken, userFname);
+                }
+                catch(err) {
+                    res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
+                }
+                finally {
+                    res.status(202).json({status: 202, data: {email: userEmail}});
+                }
+            });
+        }
+    });
+};
+
+exports.requestPasswordResetEmail = (req, res) => {
+    Account.findOne({where: {email: req.body.cred}})
+    .then(account => {
+        if (account === null) {
+            res.json({status: 404, data: "internal_server_error"});
+        }
+        else {
+            createResetToken(account.ksn)
+            .catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
+            .then(resetToken => {
+                try {
+                    postage.sendPasswordResetEmail(userEmail, resetToken, userFname);
+                }
+                catch(err) {
+                    res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
+                }
+                finally {
+                    res.status(202).json({status: 202, data: {email: userEmail}});
+                }
+            });
+        }
+    });
 };
 
 
