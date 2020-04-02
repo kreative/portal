@@ -5,9 +5,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const useragent = require("express-useragent");
+const helmet = require("helmet");
+
 const server = express();
 const PORT = process.env.SERVERPORT || 3000;
 const DB = require("./config/db").sequelize;
+const LOGGER = require("./config/logger");
 
 const accounts = require("./controllers/AccountsController");
 const appchains = require("./controllers/AppchainsController");
@@ -18,18 +21,13 @@ const verifyKey = require("./utils/VerifyKey");
 const getIPMiddleware = require("./utils/GetIPMiddleware");
 const lookupIPInfoMiddleware = require("./utils/LookupIPInfoMiddleware");
 
+server.use(helmet());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
 server.use(express.static(path.join(__dirname, '/public')));
 server.use(useragent.express());
 server.use(getIPMiddleware);
 server.use(lookupIPInfoMiddleware);
-
-server.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
 
 server.engine('handlebars', exphbs({defaultLayout: 'main'}));
 server.set('view engine', 'handlebars');
@@ -54,12 +52,12 @@ server.post('/api/accounts/reset_token/email', (req, res) => accounts.requestPas
 server.post('/api/accounts/resetpassword', (req, res) => accounts.resetPassword(req, res));
 
 // appchains routes
-server.post('/api/appchains', (req, res) => appchains.createAppchain(req, res));
+server.post('/api/appchains',verifyKey, (req, res) => appchains.createAppchain(req, res));
 
 // organizations routes
-server.post('/api/organizations', (req, res) => organizations.createOrganization(req, res))
+server.post('/api/organizations', verifyKey, (req, res) => organizations.createOrganization(req, res))
 
 // postage routes
 server.get('/api/postage/test/:email', (req, res) => postage.emailTest(req, res));
 
-server.listen(PORT, '127.0.0.1', console.log("Portal Server is ready when you are!"));
+server.listen(PORT, '127.0.0.1', console.log("Portal is ready when you are."));

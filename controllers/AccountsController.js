@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const Account = require("../models/AccountModel");
 const Keychain = require("../models/KeychainModel");
+const ResetToken = require("../models/ResetTokensModel");
 const generateKSN = require("../utils/GenerateKSN");
 const generateKeychain = require("../utils/GenerateKeychain");
 const createResetToken = require("../utils/CreateResetToken");
@@ -130,40 +131,44 @@ exports.requestPasswordResetUsername = (req, res) => {
         }
         else {
             createResetToken(account.ksn)
-            .catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
+            //.catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
             .then(resetToken => {
                 try {
-                    postage.sendPasswordResetEmail(userEmail, resetToken, userFname);
+                    postage.sendPasswordResetEmail(account.email, resetToken, account.fname);
                 }
                 catch(err) {
                     res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
                 }
                 finally {
-                    res.status(202).json({status: 202, data: {email: userEmail}});
+                    res.status(202).json({status: 202, data: {email: account.email}});
                 }
             });
         }
     });
 };
 
+
 exports.requestPasswordResetEmail = (req, res) => {
-    Account.findOne({where: {email: req.body.cred}})
+    const email = req.body.cred;
+
+    Account.findOne({where: {email}})
     .then(account => {
+        console.log(account)
         if (account === null) {
             res.json({status: 404, data: "internal_server_error"});
         }
         else {
             createResetToken(account.ksn)
-            .catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
+            //.catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
             .then(resetToken => {
                 try {
-                    postage.sendPasswordResetEmail(userEmail, resetToken, userFname);
+                    postage.sendPasswordResetEmail(account.email, resetToken, account.fname);
                 }
                 catch(err) {
                     res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
                 }
                 finally {
-                    res.status(202).json({status: 202, data: {email: userEmail}});
+                    res.status(202).json({status: 202, data: {email: account.email}});
                 }
             });
         }
@@ -172,8 +177,40 @@ exports.requestPasswordResetEmail = (req, res) => {
 
 
 exports.resetPassword = (req, res) => {
+    const resetToken = req.body.reset_token;
+    const newPassword = req.body.new_password;
 
+    const salt = bcrypt.genSaltSync(12);
+    const bpassword = bcrypt.hashSync(newPassword, salt);
+
+    ResetToken.findOne({where: {token: resetToken}})
+    .then(token => {
+        if (token === null) {
+            res.status(412).json({status: 412, data: {errorCode: "invalid_reset_token"}});
+        }
+
+        // need to add expiration validation
+        const ksn = token.ksn;
+
+        Account.update({bpassword}, {where: {ksn}})
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({status: 500})
+        })
+        .then(updated => {
+            Account.findOne({where: {ksn}})
+            .then(account => {
+                try {
+                    postage.sendPasswordResetNotification(account.email, account.fname);
+                }
+                finally {
+                    res.status(202).json({status: 202});
+                }
+            });
+        });
+    });    
 };
+
 
 // this method will be used by the client to verify that the username is unique
 // before sending over all the data to the signup method

@@ -27,7 +27,7 @@ exports.sendLoginNotificationEmail = (fname, email, ipinfo, timestamp) => {
         from: 'Portal notify@portal.kreativemail.com',
         to: email,
         subject: "Did you just login?",
-        html: fname+",<br><br> Your account was just logged into."
+        html: fname+",<br><br> Your account was just logged into. If this was you, you can ignore this email. If not, contact us asap."
     }
 
     mail.messages().send(data, (err, body) => {
@@ -45,6 +45,54 @@ exports.sendPasswordResetEmail = (email, resetToken, fname) => {
         to: email,
         subject: "Reset your password "+fname,
         html: "Hi "+fname+",<br><br><a href="+resetLink+">Click here to reset your password</a><br><br>"
+    };
+
+    mail.messages().send(data, (err, body) => {
+        if (err) {
+            throw new Error(err);
+        }
+        return body;
+    });
+};
+
+exports.sendPasswordResetNotification = (email, fname) => {
+    const data = {
+        from: 'Portal notify@portal.kreativemail.com',
+        to: email,
+        subject: "Did you just reset your password?",
+        html: fname+",<br><br>The password for your Kreative Portal account was just reset. If this was you, ignore this email. If not, contact us asap"
+    };
+
+    mail.messages().send(data, (err, body) => {
+        if (err) {
+            throw new Error(err);
+        }
+        return body;
+    });
+};
+
+exports.sendNewOrganizationCreatedEmail = (adminEmail, orgName) => {
+    const data = {
+        from: 'Portal notify@portal.kreativemail.com',
+        to: adminEmail,
+        subject: "Your Organization, "+orgName+", was just created",
+        html: "Good job on creating your organization. Have fun, stay radical."
+    };
+
+    mail.messages().send(data, (err, body) => {
+        if (err) {
+            throw new Error(err);
+        }
+        return body;
+    });
+};
+
+exports.sendNewAppchainCreatedEmail = (adminEmail, appName) => {
+    const data = {
+        from: 'Portal notify@portal.kreativemail.com',
+        to: adminEmail,
+        subject: "Your Appchain for "+appName+" was just created",
+        html: "Good job on adding your App to the Portal DevHub. Have fun, stay radical."
     };
 
     mail.messages().send(data, (err, body) => {

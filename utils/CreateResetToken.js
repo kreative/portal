@@ -13,15 +13,13 @@ const generateToken = (callback) => {
 
 const createResetToken = (ksn) => {
     const createdat = Date.now();
-
-    generateToken(token => {
-        return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
+        generateToken(token => {
             ResetToken.create({
                 token,
                 ksn,
                 createdat
             })
-            .catch(err => reject(err))
             .then(resetToken => resolve(resetToken.token));
         });
     });

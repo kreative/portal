@@ -25,6 +25,7 @@ const verifyKey = (req, res, next) => {
                 res.status(401).json({status: 401, data: {errorCode: "keychain_expired"}});
             }
             res.locals.ccn = keychain.ccn;
+            res.locals.ksn = keychain.ksn;
             next();
         })
         .catch(err => res.status(500).json({status: 500, data: err}));
