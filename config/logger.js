@@ -1,38 +1,51 @@
-const log4js = require("log4js");
+require("winston-mongodb");
+const {
+    createLogger,
+    format,
+    transports
+} = require("winston");
 
-log4js.configure({
-    appenders: {
-        error: {   
-            type: 'file',
-            filename: "/logs/error.log",
-            category: 'error',
-            maxLogSize: 20480,
-            backups: 10
-        },
-        info: {   
-            type: "file",
-            filename: "/logs/info.log",
-            category: 'info',
-            maxLogSize: 20480,
-            backups: 10
-        }
-    },
-    categories: {
-        default: {
-            appenders: ['info'],
-            level: 'info'
-        },
-        error: {
-            appenders: ['error'],
-            level: 'error'
-        },
-        info: {
-            appenders: ['info'],
-            level: 'info'
-        }
-    }
+const MONGODB_URL = process.env.MONGODB_URL;
+
+const logger = createLogger({
+    transports: [
+        new transports.MongoDB({
+            level: 'error',
+            db: MONGODB_URL,
+            collection: 'logs',
+            options: {
+                useUnifiedTopology: true
+            }
+        }),
+        new transports.MongoDB({
+            level: 'info',
+            db: MONGODB_URL,
+            collection: 'logs',
+            options: {
+                useUnifiedTopology: true
+            }
+        }),
+        new transports.MongoDB({
+            level: 'log',
+            db: MONGODB_URL,
+            collection: 'logs',
+            options: {
+                useUnifiedTopology: true
+            }
+        }),
+        new transports.MongoDB({
+            level: 'emerg',
+            db: MONGODB_URL,
+            collection: 'logs',
+            options: {
+                useUnifiedTopology: true
+            }
+        }),
+        new transports.Console({
+            level: 'info',
+            format: format.combine(format.timestamp(), format.simple())
+        })
+    ]
 });
-
-const logger = log4js.getLogger();
 
 module.exports = logger;

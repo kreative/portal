@@ -33,8 +33,8 @@ server.engine('handlebars', exphbs({defaultLayout: 'main'}));
 server.set('view engine', 'handlebars');
 
 DB.authenticate()
-.then(() => console.log('Portal DB is operational.'))
-.catch(err => console.error('Connection to Portal DB failed', err));
+.then(() => LOGGER.info('Portal DB is operational.'))
+.catch(err => LOGGER.error({message: 'Connection to Portal DB failed', meta: err}));
 
 server.get('/', (req, res) => res.json(res.locals));
 
@@ -60,4 +60,4 @@ server.post('/api/organizations', verifyKey, (req, res) => organizations.createO
 // postage routes
 server.get('/api/postage/test/:email', (req, res) => postage.emailTest(req, res));
 
-server.listen(PORT, '127.0.0.1', console.log("Portal is ready when you are."));
+server.listen(PORT, '127.0.0.1', LOGGER.info("Portal is ready when you are."));
