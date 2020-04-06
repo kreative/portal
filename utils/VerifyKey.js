@@ -1,7 +1,8 @@
 const Keychain = require('../models/KeychainModel');
 const jwt = require('jsonwebtoken');
 
-const SECRET = process.env.KEYCHAIN_SECURITY_CODE;
+const rawSecret = process.env.KEYCHAIN_SECURITY_CODE;
+const SECRET = Buffer.from(rawSecret, 'base64');
 
 const verifyKey = (req, res, next) => {
     const key = req.headers['key'];
@@ -9,7 +10,7 @@ const verifyKey = (req, res, next) => {
     const ksn = req.body.ksn;
     const aidn = req.body.aidn;
 
-    jwt.verify(key, new Buffer(SECRET, 'base64'), (err, payload) => {
+    jwt.verify(key, SECRET, (err, payload) => {
         if (err) {
             res.status(401).json({status: 401, data: {errorCode: "invalid_key"}});
         }

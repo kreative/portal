@@ -1,19 +1,38 @@
 const bcrypt = require("bcryptjs");
 const Account = require("../models/AccountModel");
 const Keychain = require("../models/KeychainModel");
-const ResetToken = require("../models/ResetTokensModel");
+const ResetCode = require("../models/ResetCodeModel");
 const generateKSN = require("../utils/GenerateKSN");
+const convertUsernameToKSN = require("../utils/ConvertUsernameToKsn");
 const generateKeychain = require("../utils/GenerateKeychain");
-const createResetToken = require("../utils/CreateResetToken");
+const createResetCode = require("../utils/CreateResetCode");
 const postage = require("../utils/PostageUtils");
+const signal = require("../utils/SignalUtils");
+
+const portalRootURL = "https://portal.kreative.im/";
 
 exports.getLoginPage = (req, res) => {
-    const appchain = req.query.appchain;
+    const aidn = req.query.aidn;
+    const appNameRaw = req.query.appname;
+    const appName = appNameRaw.replace("+", " ");
+    const callbackUrlRaw = req.query.callback;
+    const callbackUrl = decodeURIComponent(callbackUrlRaw);
+    const signupUrl = encodeURIComponent(`${portalRootURL}signup?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
+    const passwordResetUrl = encodeURIComponent(`${portalRootURL}passwordreset?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
+
+    res.render('login', {callbackUrl, appName, signupUrl, passwordResetUrl});
 };
 
 
 exports.getSignupPage = (req, res) => {
+    const aidn = req.query.aidn;
+    const appNameRaw = req.query.appname;
+    const appName = appNameRaw.replace("+", " ");
+    const callbackUrlRaw = req.query.callback;
+    const callbackUrl = decodeURIComponent(callbackUrlRaw);
+    const loginUrl = encodeURIComponent(`${portalRootURL}login?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
 
+    res.render('signup', {callbackUrl, appName, loginUrl});
 };
 
 
@@ -38,6 +57,8 @@ exports.signup = (req, res) => {
     const fname = req.body.fname;
     const lname = req.body.lname;
     const email = req.body.email;
+    const phone_number = req.body.phone_number;
+    const phone_country_code = req.body.phone_country_code;
     const password = req.body.password;
     const createdat = Date.now();
     const aidn = req.body.AIDN;
@@ -52,13 +73,15 @@ exports.signup = (req, res) => {
             fname,
             lname,
             email,
+            phone_number,
+            phone_country_code,
             bpassword,
             createdat
         })
         .catch(err => {
             console.log(err)
             if (err.name === "SequelizeUniqueConstraintError") {
-                res.status(500).json({status: 500, data: {errorCode: "email_inuse"}});
+                res.status(500).json({status: 500, data: {errorCode: "email_or_phone_inuse"}});
             }
             else {
                 res.status(500).json({status: 500, data: err});
@@ -78,6 +101,9 @@ exports.signup = (req, res) => {
         });
     });
 };
+
+
+exports.verifyEmail = (req, res) => {};
 
 
 exports.login = (req, res) => {
@@ -120,27 +146,43 @@ exports.logout = (req, res) => {
 };
 
 
-exports.requestPasswordResetUsername = (req, res) => {
-    const username = req.body.cred;
+exports.requestPasswordResetCode = (req, res) => {
+    const username = req.body.username;
+    const deliveryType = req.body.delivery_type;
 
     Account.findOne({where: {username}})
     .then(account => {
-        console.log(account)
         if (account === null) {
-            res.json({status: 404, data: "internal_server_error"});
+            res.json({status: 404, data: {errorCode: "no_account_found"}});
         }
         else {
-            createResetToken(account.ksn)
-            //.catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
-            .then(resetToken => {
-                try {
-                    postage.sendPasswordResetEmail(account.email, resetToken, account.fname);
+            const phone = account.phone_number;
+            const cc = account.phone_country_code;
+
+            createResetCode(account.ksn)
+            .catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_server_error"}}))
+            .then(resetCode => {
+                if (!["email", "sms"].includes(deliveryType)) {
+                    res.status(404).json({status: 404, data: {errorCode: "delivery_type_invalid"}});
                 }
-                catch(err) {
-                    res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
-                }
-                finally {
-                    res.status(202).json({status: 202, data: {email: account.email}});
+                else {
+                    try {
+                        if (deliveryType === "email") {
+                            postage.sendResetCode(account.email, resetCode, account.fname);
+                        }
+                        else if (deliveryType === "sms") {
+                            const tel = `+${cc.toString()}${phone.toString()}`;
+                            signal.sendResetCode(tel, resetCode, account.fname);
+                        }
+                    }
+                    catch(err) {
+                        res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
+                    }
+                    finally {
+                        const strPhone = phone.toString();
+                        const lastFourDigits = strPhone.slice(6, 10);
+                        res.status(202).json({status: 202, data: {email: account.email, tel: lastFourDigits}});
+                    }
                 }
             });
         }
@@ -148,27 +190,25 @@ exports.requestPasswordResetUsername = (req, res) => {
 };
 
 
-exports.requestPasswordResetEmail = (req, res) => {
-    const email = req.body.cred;
+exports.verifyResetCode = (req, res) => {
+    const code = req.body.reset_code;
+    const username = req.body.username;
 
-    Account.findOne({where: {email}})
-    .then(account => {
-        console.log(account)
-        if (account === null) {
-            res.json({status: 404, data: "internal_server_error"});
+    ResetCode.findOne({where: {code}})
+    .then(resetCode => {
+        if (resetCode === null) {
+            res.status(404).json({status: 404, data: {errorCode: "reset_code_not_found"}});
         }
         else {
-            createResetToken(account.ksn)
-            //.catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_sever_error", error: err}}))
-            .then(resetToken => {
-                try {
-                    postage.sendPasswordResetEmail(account.email, resetToken, account.fname);
+            convertUsernameToKSN(username)
+            .catch(err => res.status(500).json({status: 500, data: {errorCode: err.errorCode}}))
+            .then(ksn => {
+                if (ksn === resetCode.ksn) {
+                    ResetCode.destroy({where: {code}})
+                    .then(() => res.status(202).json({status: 202, data: {ksn}}));
                 }
-                catch(err) {
-                    res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
-                }
-                finally {
-                    res.status(202).json({status: 202, data: {email: account.email}});
+                else {
+                    res.status(401).json({status: 401, data: {errorCode: "invalid_reset_code"}});
                 }
             });
         }
@@ -176,39 +216,42 @@ exports.requestPasswordResetEmail = (req, res) => {
 };
 
 
+// this method has to be secured
+// only the portal frontend can call this method, no outside source
+// that too, only after the reset code is verified
 exports.resetPassword = (req, res) => {
-    const resetToken = req.body.reset_token;
     const newPassword = req.body.new_password;
+    const ksn = req.body.ksn;
 
     const salt = bcrypt.genSaltSync(12);
     const bpassword = bcrypt.hashSync(newPassword, salt);
 
-    ResetToken.findOne({where: {token: resetToken}})
-    .then(token => {
-        if (token === null) {
-            res.status(412).json({status: 412, data: {errorCode: "invalid_reset_token"}});
+    Account.findOne({where: {ksn}})
+    .catch(err => {
+        //log errror
+        res.status(500).json({status: 500, data: {errorCode: "internal_server_error"}});
+    })
+    .then(account => {
+        if (account === null) {
+            //log erro
+            res.status(404).json({status: 404, data: {errorCode: "account_not_found"}});
         }
-
-        // need to add expiration validation
-        const ksn = token.ksn;
-
-        Account.update({bpassword}, {where: {ksn}})
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({status: 500})
-        })
-        .then(updated => {
-            Account.findOne({where: {ksn}})
-            .then(account => {
+        else {
+            Account.update({bpassword}, {where: {ksn}})
+            .catch(err => {
+                //log error
+                res.status(500).json({status: 500, data: {erroCode: "internal_server_error"}});
+            })
+            .then(update => {
                 try {
                     postage.sendPasswordResetNotification(account.email, account.fname);
                 }
                 finally {
                     res.status(202).json({status: 202});
                 }
-            });
-        });
-    });    
+            })
+        }
+    });
 };
 
 
@@ -220,3 +263,5 @@ exports.checkUsername = (req, res) => {};
 // and that the account doesn't exist
 // before sending over all the data to the signup method
 exports.checkEmail = (req, res) => {};
+
+exports.checkPhoneNumber = (req, res) => {};

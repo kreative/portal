@@ -38,13 +38,12 @@ exports.sendLoginNotificationEmail = (fname, email, ipinfo, timestamp) => {
     });
 };
 
-exports.sendPasswordResetEmail = (email, resetToken, fname) => {
-    const resetLink = "https://portal.kreative.im/resetpassword?token="+resetToken;
+exports.sendResetCode = (email, resetCode, fname) => {
     const data = {
         from: 'Portal notify@portal.kreativemail.com',
         to: email,
         subject: "Reset your password "+fname,
-        html: "Hi "+fname+",<br><br><a href="+resetLink+">Click here to reset your password</a><br><br>"
+        html: `Hi ${fname},<br><br>Your verification code is ${resetCode}<br><br>`
     };
 
     mail.messages().send(data, (err, body) => {

@@ -25,6 +25,13 @@ const Account = DB.define('account', {
           allowNull: false,
           unique: true
     },
+    phone_country_code: {
+        type: Sequelize.BIGINT
+    },
+    phone_number: {
+        type: Sequelize.BIGINT,
+        unique: true
+    },
     bpassword: {
         type: Sequelize.TEXT,
         allowNull: false

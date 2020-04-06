@@ -47,8 +47,8 @@ server.post('/api/accounts/signup', (req, res) => accounts.signup(req, res));
 server.post('/api/accounts/login', (req, res) => accounts.login(req, res));
 server.post('/api/accounts/logout', verifyKey, (req, res) => accounts.logout(req, res));
 server.post('/api/accounts/verify', verifyKey, (req, res) => accounts.verify(req, res));
-server.post('/api/accounts/reset_token/username', (req, res) => accounts.requestPasswordResetUsername(req, res));
-server.post('/api/accounts/reset_token/email', (req, res) => accounts.requestPasswordResetEmail(req, res));
+server.post('/api/accounts/resetcode', (req, res) => accounts.requestPasswordResetCode(req, res));
+server.post('/api/accounts/resetcode/verify', (req, res) => accounts.verifyResetCode(req, res));
 server.post('/api/accounts/resetpassword', (req, res) => accounts.resetPassword(req, res));
 
 // appchains routes

@@ -5,8 +5,8 @@ const DB = require("../config/db").sequelize;
 // but I forgot to put it in, and it still works
 // so I don't see the point of making it more complex then it has to be
 
-const ResetToken = DB.define('reset_token', {
-    token: {
+const ResetCode = DB.define('reset_code', {
+    code: {
         type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false
@@ -23,4 +23,4 @@ const ResetToken = DB.define('reset_token', {
     timestamps: false
 });
 
-module.exports = ResetToken;
+module.exports = ResetCode;
