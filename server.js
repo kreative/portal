@@ -36,28 +36,28 @@ DB.authenticate()
 .then(() => LOGGER.info('Portal DB is operational.'))
 .catch(err => LOGGER.error({message: 'Connection to Portal DB failed', meta: err}));
 
-server.get('/', (req, res) => res.json(res.locals));
+server.get('/', res.json(res.locals));
 
 // accounts routes
-server.get('/login', (req, res) => accounts.getLoginPage(req, res));
-server.get('/signup', (req, res) => accounts.getSignupPage(req, res));
-server.get('/passwordreset', (req, res) => accounts.getRequestResetPasswordPage(req, res));
-server.get('/resetpassword', (req, res) => accounts.getResetPasswordPage(req, res));
-server.post('/api/accounts/signup', (req, res) => accounts.signup(req, res));
-server.post('/api/accounts/login', (req, res) => accounts.login(req, res));
-server.post('/api/accounts/logout', verifyKey, (req, res) => accounts.logout(req, res));
-server.post('/api/accounts/verify', verifyKey, (req, res) => accounts.verify(req, res));
-server.post('/api/accounts/resetcode', (req, res) => accounts.requestPasswordResetCode(req, res));
-server.post('/api/accounts/resetcode/verify', (req, res) => accounts.verifyResetCode(req, res));
-server.post('/api/accounts/resetpassword', (req, res) => accounts.resetPassword(req, res));
+server.get('/login', accounts.getLoginPage);
+server.get('/signup', accounts.getSignupPage);
+server.get('/passwordreset', accounts.getRequestResetPasswordPage);
+server.get('/resetpassword', accounts.getResetPasswordPage);
+server.post('/api/accounts/signup', accounts.signup);
+server.post('/api/accounts/login', accounts.login);
+server.post('/api/accounts/logout', verifyKey, accounts.logout);
+server.post('/api/accounts/verify', verifyKey, accounts.verify);
+server.post('/api/accounts/resetcode', accounts.requestPasswordResetCode);
+server.post('/api/accounts/resetcode/verify', accounts.verifyResetCode);
+server.post('/api/accounts/resetpassword', accounts.resetPassword);
 
 // appchains routes
-server.post('/api/appchains',verifyKey, (req, res) => appchains.createAppchain(req, res));
+server.post('/api/appchains',verifyKey, appchains.createAppchain);
 
 // organizations routes
-server.post('/api/organizations', verifyKey, (req, res) => organizations.createOrganization(req, res))
+server.post('/api/organizations', verifyKey, organizations.createOrganization)
 
 // postage routes
-server.get('/api/postage/test/:email', (req, res) => postage.emailTest(req, res));
+server.get('/api/postage/test/:email', postage.emailTest);
 
 server.listen(PORT, '127.0.0.1', LOGGER.info("Portal is ready when you are."));
