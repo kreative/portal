@@ -53,7 +53,11 @@ exports.verifyKey = (req, res) => {
     const aidn = req.body.aidn;
 
     verifyKey(key, ksn, aidn)
-    .then(info => res.status(202).json({status:202}))
+    .then(info => {
+        const ccn = info.ccn;
+
+        res.status(202).json({status:202, data:{ccn,ksn,aidn}});
+    })
     .catch(err => {
         const status = err.status;
         const errorCode = err.code;

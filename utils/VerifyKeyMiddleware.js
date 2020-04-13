@@ -15,6 +15,7 @@ const verifyKeyMiddleware = (req, res, next) => {
     .then(info => {
         res.locals.ksn = info.ksn;
         res.locals.ccn = info.ccn;
+        res.locals.aidn = info.aidn;
 
         next();
     });
