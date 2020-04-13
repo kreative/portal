@@ -36,8 +36,6 @@ DB.authenticate()
 .then(() => LOGGER.info('Portal DB is operational.'))
 .catch(err => LOGGER.error({message: 'Connection to Portal DB failed', meta: err}));
 
-server.get('/', res.json(res.locals));
-
 // accounts routes
 server.get('/login', accounts.getLoginPage);
 server.get('/signup', accounts.getSignupPage);
