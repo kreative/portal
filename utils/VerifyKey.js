@@ -7,6 +7,8 @@ const SECRET = Buffer.from(rawSecret, 'base64');
 const verifyKey = (key, ksn, aidn) => {
     return new Promise((resolve, reject) => {
         jwt.verify(key, SECRET, (err, payload) => {
+            console.log(payload)
+            
             if (err) reject({status:401, code:"invalid_key"});
             if (payload.ksn !== ksn) reject({status:401, code:"ksn_mismatch"});
             if (payload.aidn !== aidn) reject({status:401, code:"aidn_mismatch"});
