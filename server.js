@@ -17,7 +17,7 @@ const appchains = require("./controllers/AppchainsController");
 const organizations = require("./controllers/OrganizationsController");
 const postage = require("./controllers/PostageController");
 
-const verifyKey = require("./utils/VerifyKey");
+const verifyKeyMiddleware = require("./utils/VerifyKeyMiddleware");
 const getIPMiddleware = require("./utils/GetIPMiddleware");
 const lookupIPInfoMiddleware = require("./utils/LookupIPInfoMiddleware");
 
@@ -45,17 +45,17 @@ server.get('/passwordreset', accounts.getRequestResetPasswordPage);
 server.get('/resetpassword', accounts.getResetPasswordPage);
 server.post('/api/accounts/signup', accounts.signup);
 server.post('/api/accounts/login', accounts.login);
-server.post('/api/accounts/logout', verifyKey, accounts.logout);
-server.post('/api/accounts/verify', verifyKey, accounts.verify);
+server.post('/api/accounts/logout', verifyKeyMiddleware, accounts.logout);
+server.post('/api/accounts/verify', accounts.verifyKey);
 server.post('/api/accounts/resetcode', accounts.requestPasswordResetCode);
 server.post('/api/accounts/resetcode/verify', accounts.verifyResetCode);
 server.post('/api/accounts/resetpassword', accounts.resetPassword);
 
 // appchains routes
-server.post('/api/appchains',verifyKey, appchains.createAppchain);
+server.post('/api/appchains',verifyKeyMiddleware, appchains.createAppchain);
 
 // organizations routes
-server.post('/api/organizations', verifyKey, organizations.createOrganization)
+server.post('/api/organizations', verifyKeyMiddleware, organizations.createOrganization)
 
 // postage routes
 server.get('/api/postage/test/:email', postage.emailTest);

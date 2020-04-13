@@ -13,7 +13,11 @@ const ResetCode = DB.define('reset_code', {
     },
     ksn: {
         type: Sequelize.BIGINT,
-        allowNull: false
+        allowNull: false,
+        references: {
+            model: 'accounts',
+            key: 'ksn'
+        }
     },
     createdat: {
         type: Sequelize.BIGINT,

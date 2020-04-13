@@ -11,6 +11,13 @@ const Organization = DB.define('organization', {
         primaryKey: true,
         autoIncrement: false
     },
+    ksn: {
+        type: Sequelize.BIGINT,
+        references: {
+            mode: 'accounts',
+            key: 'ksn'
+        }
+    },
     name: {
         type: Sequelize.TEXT,
         allowNull: false

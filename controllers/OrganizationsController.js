@@ -3,6 +3,7 @@ const generateOIDN = require("../utils/GenerateOIDN");
 const postage = require("../utils/PostageUtils");
 
 exports.createOrganization = (req, res) => {
+    const ksn = req.headers['portal_ksn'];
     const name = req.body.name;
     const admin_email = req.body.admin_email;
     const createdat = Date.now();
@@ -10,6 +11,7 @@ exports.createOrganization = (req, res) => {
     generateOIDN(oidn => {
         Organization.create({
             oidn,
+            ksn,
             name,
             admin_email,
             createdat

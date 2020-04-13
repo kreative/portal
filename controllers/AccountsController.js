@@ -8,6 +8,7 @@ const generateKeychain = require("../utils/GenerateKeychain");
 const createResetCode = require("../utils/CreateResetCode");
 const postage = require("../utils/PostageUtils");
 const signal = require("../utils/SignalUtils");
+const verifyKey = require("../utils/VerifyKey");
 
 const portalRootURL = "https://portal.kreative.im/";
 
@@ -46,10 +47,20 @@ exports.getResetPasswordPage = (req, res) => {
 };
 
 
-// this is going to essentially be what get's sent back if
-// the key is valid, as the verifyKey middleware will run
-// before this controller is run
-exports.verify = (req, res) => res.status(202).json({status: 202});
+exports.verifyKey = (req, res) => {
+    const key = req.body.key;
+    const ksn = req.body.ksn;
+    const aidn = req.body.aidn;
+
+    verifyKey(key, ksn, aidn)
+    .then(info => res.status(202).json({status:202}))
+    .catch(err => {
+        const status = err.status;
+        const errorCode = err.code;
+
+        res.status(status).json({status, data:{errorCode}});
+    })
+};
 
 
 exports.signup = (req, res) => {
@@ -109,7 +120,7 @@ exports.verifyEmail = (req, res) => {};
 exports.login = (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    const aidn = req.body.AIDN;
+    const aidn = req.headers['portal_aidn'];
 
     Account.findOne({where: {username}})
     .then(account => {
@@ -221,7 +232,7 @@ exports.verifyResetCode = (req, res) => {
 // that too, only after the reset code is verified
 exports.resetPassword = (req, res) => {
     const newPassword = req.body.new_password;
-    const ksn = req.body.ksn;
+    const ksn = req.headers['portal_ksn'];
 
     const salt = bcrypt.genSaltSync(12);
     const bpassword = bcrypt.hashSync(newPassword, salt);
@@ -263,5 +274,6 @@ exports.checkUsername = (req, res) => {};
 // and that the account doesn't exist
 // before sending over all the data to the signup method
 exports.checkEmail = (req, res) => {};
+
 
 exports.checkPhoneNumber = (req, res) => {};
