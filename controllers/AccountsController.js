@@ -124,7 +124,7 @@ exports.verifyEmail = (req, res) => {};
 exports.login = (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    const aidn = req.headers['portal_aidn'];
+    const aidn = req.body.AIDN;
 
     Account.findOne({where: {username}})
     .then(account => {
