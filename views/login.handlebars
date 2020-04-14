@@ -1,10 +1,12 @@
 <div id="login-contents">
-    <h1>Login using Portal</h1>
-    <p>To continue to {{ appName }}</p>
-    <label class="mdc-text-field">
-        <div class="mdc-text-field__ripple"></div>
-        <input class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
-        <span class="mdc-floating-label" id="my-label-id">Hint text</span>
-        <div class="mdc-line-ripple"></div>
-    </label>
+    <h1>Login with your Portal ID</h1>
+    <p class="subtitle">and continue to {{ appName }}</p>
+    <input placeholder="Username" type="text" class="input_text" id="username">
+    <p class="helper_link" id="username-helper-link">Forgot your username?</p>
+    <input placeholder="Password" type="password" class="input_text hidden" id="password">
+    <label class="underfield_label" id="password-label"></label>
+    <button type="submit" id="continue-btn">Continue</button>
+    <hr>
+    <button type="button" class="btn_outline" id="signup-btn">Create a Portal ID</button>
 </div>
+<script src="scripts/login.js"></script>

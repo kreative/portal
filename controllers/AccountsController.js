@@ -20,8 +20,9 @@ exports.getLoginPage = (req, res) => {
     const callbackUrl = decodeURIComponent(callbackUrlRaw);
     const signupUrl = encodeURIComponent(`${portalRootURL}signup?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
     const passwordResetUrl = encodeURIComponent(`${portalRootURL}passwordreset?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
+    const findUsernameUrl = encodeURIComponent(`${portalRootURL}findusername?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
 
-    res.render('login', {callbackUrl, appName, signupUrl, passwordResetUrl});
+    res.render('login', {callbackUrl, appName, signupUrl, passwordResetUrl, findUsernameUrl});
 };
 
 
@@ -43,6 +44,11 @@ exports.getRequestResetPasswordPage = (req, res) => {
 
 
 exports.getResetPasswordPage = (req, res) => {
+
+};
+
+
+exports.getFindUsernamePage = (req, res) => {
 
 };
 
@@ -175,7 +181,9 @@ exports.requestPasswordResetCode = (req, res) => {
             const cc = account.phone_country_code;
 
             createResetCode(account.ksn)
-            .catch(err => res.status(500).json({status: 500, data: {errorCode: "internal_server_error"}}))
+            .catch(err => {
+                res.status(500).json({status: 500, data: {errorCode: "internal_server_error"}})
+            })
             .then(resetCode => {
                 if (!["email", "sms"].includes(deliveryType)) {
                     res.status(404).json({status: 404, data: {errorCode: "delivery_type_invalid"}});
@@ -272,12 +280,37 @@ exports.resetPassword = (req, res) => {
 
 // this method will be used by the client to verify that the username is unique
 // before sending over all the data to the signup method
-exports.checkUsername = (req, res) => {};
+exports.checkIfUsernameExists = (req, res) => {
+    const username = req.params.username;
+
+    Account.findOne({where:{username}})
+    .then(account => {
+        if (account === null) res.status(202).json({status:202, data:{exists:false}});
+        else res.status(202).json({status:202, data:{exists:true}});
+    });
+};
+
 
 // this method will be used by the client to verify that the email is unique
 // and that the account doesn't exist
 // before sending over all the data to the signup method
-exports.checkEmail = (req, res) => {};
+exports.checkIfEmailExists = (req, res) => {
+    const email = req.params.email;
+
+    Account.findOne({where:{email}})
+    .then(account => {
+        if (account === null) res.status(202).json({status:202, data:{exists:false}});
+        else res.status(202).json({status:202, data:{exists:true}});
+    });
+};
 
 
-exports.checkPhoneNumber = (req, res) => {};
+exports.checkIfPhoneExists = (req, res) => {
+    const phone_number = req.params.phone;
+
+    Account.findOne({where:{phone_number}})
+    .then(account => {
+        if (account === null) res.status(202).json({status:202, data:{exists:false}});
+        else res.status(202).json({status:202, data:{exists:true}});
+    });
+};
