@@ -10,31 +10,19 @@ const postage = require("../utils/PostageUtils");
 const signal = require("../utils/SignalUtils");
 const verifyKey = require("../utils/VerifyKey");
 
-const portalRootURL = "https://portal.kreative.im/";
-
 exports.getLoginPage = (req, res) => {
-    const aidn = req.query.aidn;
     const appNameRaw = req.query.appname;
     const appName = appNameRaw.replace("+", " ");
-    const callbackUrlRaw = req.query.callback;
-    const callbackUrl = decodeURIComponent(callbackUrlRaw);
-    const signupUrl = encodeURIComponent(`${portalRootURL}signup?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
-    const passwordResetUrl = encodeURIComponent(`${portalRootURL}passwordreset?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
-    const findUsernameUrl = encodeURIComponent(`${portalRootURL}findusername?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
 
-    res.render('login', {callbackUrl, appName, signupUrl, passwordResetUrl, findUsernameUrl});
+    res.render('login', {appName});
 };
 
 
 exports.getSignupPage = (req, res) => {
-    const aidn = req.query.aidn;
     const appNameRaw = req.query.appname;
     const appName = appNameRaw.replace("+", " ");
-    const callbackUrlRaw = req.query.callback;
-    const callbackUrl = decodeURIComponent(callbackUrlRaw);
-    const loginUrl = encodeURIComponent(`${portalRootURL}login?aidn=${aidn}&callback=${callbackUrlRaw}&appname=${appNameRaw}`);
 
-    res.render('signup', {callbackUrl, appName, loginUrl});
+    res.render('signup', {appName});
 };
 
 
@@ -147,7 +135,7 @@ exports.login = (req, res) => {
                             postage.sendLoginNotificationEmail(account.fname, account.email, {});
                         }
                         finally {
-                            res.status(202).json({status: 202, data: key});
+                            res.status(202).json({status: 202, data: {key}});
                         }
                     });
                 }
@@ -286,7 +274,7 @@ exports.checkIfUsernameExists = (req, res) => {
     Account.findOne({where:{username}})
     .then(account => {
         if (account === null) res.status(202).json({status:202, data:{exists:false}});
-        else res.status(202).json({status:202, data:{exists:true}});
+        else res.status(202).json({status:202, data:{exists:true,fname:account.fname}});
     });
 };
 
