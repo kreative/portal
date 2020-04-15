@@ -50,7 +50,7 @@ button:hover {
 
 .input_text {
     padding: 0.9em 1.1em;
-    background: rgba(196, 196, 196, 0.2);
+    background: #F6F6F4;
     border: 1px solid #CFCFCF;
     border-radius: 3px;
     box-sizing: border-box;
@@ -60,8 +60,8 @@ button:hover {
 }
 
 .input_text:focus {
-    border-color: #93C8FF;
-    background-color: #E7F2FD;
+    border: 1px solid #93C8FF;
+    background: #E7F2FD;
 }
 
 .btn_outline {
@@ -92,6 +92,31 @@ button:hover {
     text-decoration: underline;
 }
 
+.alert {
+    padding: 20px 0.8em;
+    background-color: #EB5757;
+    color: white;
+    margin-bottom: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    border-left: 5px red solid;
+    border-radius: 3px;
+}
+  
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;;
+}
+  
+.closebtn:hover {
+    color: #818181;
+}
+
 .hidden {
     display: none;
 }
@@ -103,8 +128,8 @@ button:hover {
 }
 
 .error {
-    outline: #EB5757;
-    color: #EB5757;
+    background: #F9D5D5;
+    border: 1px solid #EB5757;
 }
 
 .outer {
