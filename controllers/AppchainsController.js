@@ -12,7 +12,7 @@ exports.createAppchain = (req, res) => {
     Organization.findOne({where: {oidn}})
     .then(org => {
         if (org === null) {
-            res.status(404).json({status: 404, data: {errorCode: "organization_not_found"}});
+            res.json({status: 404, data: {errorCode: "organization_not_found"}});
         }
 
         generateACN(acn => 
@@ -24,13 +24,13 @@ exports.createAppchain = (req, res) => {
                     oidn,
                     createdat
                 })
-                .catch(err => res.status(500).json({status: 500, data: err}))
+                .catch(err => res.json({status: 500, data: err}))
                 .then(appchain => {
                     try {
                         postage.sendNewAppchainCreatedEmail(org.admin_email, name);
                     }
                     finally {
-                        res.status(202).json({status: 202, data: appchain});   
+                        res.json({status: 202, data: appchain});   
                     }
                 });
             }

@@ -16,13 +16,13 @@ exports.createOrganization = (req, res) => {
             admin_email,
             createdat
         })
-        .catch(err => res.status(500).json({status: 500, data: err}))
+        .catch(err => res.json({status: 500, data: err}))
         .then(org => {
             try {
                 postage.sendNewOrganizationCreatedEmail(admin_email, name);
             }
             finally {
-                res.status(292).json({status: 202, data: org});
+                res.json({status: 202, data: org});
             }
         });
     });

@@ -10,7 +10,7 @@ const verifyKeyMiddleware = (req, res, next) => {
         const status = err.status;
         const errorCode = err.code;
 
-        res.status(status).json({status, data:{errorCode}});
+        res.json({status, data:{errorCode}});
     })
     .then(info => {
         res.locals.ksn = info.ksn;

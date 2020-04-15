@@ -50,13 +50,13 @@ exports.verifyKey = (req, res) => {
     .then(info => {
         const ccn = info.ccn;
 
-        res.status(202).json({status:202, data:{ccn,ksn,aidn}});
+        res.json({status:202, data:{ccn,ksn,aidn}});
     })
     .catch(err => {
         const status = err.status;
         const errorCode = err.code;
 
-        res.status(status).json({status, data:{errorCode}});
+        res.json({status, data:{errorCode}});
     })
 };
 
@@ -90,21 +90,21 @@ exports.signup = (req, res) => {
         .catch(err => {
             console.log(err)
             if (err.name === "SequelizeUniqueConstraintError") {
-                res.status(500).json({status: 500, data: {errorCode: "email_or_phone_inuse"}});
+                res.json({status: 500, data: {errorCode: "email_or_phone_inuse"}});
             }
             else {
-                res.status(500).json({status: 500, data: err});
+                res.json({status: 500, data: err});
             }
         })
         .then(account => {
             generateKeychain(account.ksn, aidn)
-            .catch(err => res.status(500).json({status: 500, data: err}))
+            .catch(err => res.json({status: 500, data: err}))
             .then(key => {
                 try {
                     postage.sendWelcomeEmail(account.fname, account.email);
                 }
                 finally {
-                    res.status(202).json({status: 202, data: key});
+                    res.json({status: 202, data: key});
                 }
             });
         });
@@ -122,24 +122,25 @@ exports.login = (req, res) => {
 
     Account.findOne({where: {username}})
     .then(account => {
-        if (account === null) res.status(404).json({status: 404});
+        if (account === null) res.json({status: 404});
         else {
             bcrypt.compare(password, account.bpassword)
-            .catch(err => res.status(500).json({status: 500, data: err}))
+            .catch(err => res.json({status: 500, data: err}))
             .then(result => {
+                console.log(result)
                 if (result) {
                     generateKeychain(account.ksn, aidn)
-                    .catch(err => res.status(500).json({status: 500, data: err}))
+                    .catch(err => res.json({status: 500, data: err}))
                     .then(key => {
                         try {
                             postage.sendLoginNotificationEmail(account.fname, account.email, {});
                         }
                         finally {
-                            res.status(202).json({status: 202, data: {key}});
+                            res.json({status: 202, data: {key}});
                         }
                     });
                 }
-                else res.status(406).json({status: 406});
+                else res.json({status: 406});
             });
         }
     });
@@ -150,8 +151,8 @@ exports.logout = (req, res) => {
     const ccn = res.locals.ccn;
 
     Keychain.update({expired: true},{where: {ccn}})
-    .catch(err => res.status(500).json({status: 500}))
-    .then(update => res.status(202).json({status: 202}));
+    .catch(err => res.json({status: 500}))
+    .then(update => res.json({status: 202}));
 };
 
 
@@ -170,11 +171,11 @@ exports.requestPasswordResetCode = (req, res) => {
 
             createResetCode(account.ksn)
             .catch(err => {
-                res.status(500).json({status: 500, data: {errorCode: "internal_server_error"}})
+                res.json({status: 500, data: {errorCode: "internal_server_error"}})
             })
             .then(resetCode => {
                 if (!["email", "sms"].includes(deliveryType)) {
-                    res.status(404).json({status: 404, data: {errorCode: "delivery_type_invalid"}});
+                    res.json({status: 404, data: {errorCode: "delivery_type_invalid"}});
                 }
                 else {
                     try {
@@ -187,12 +188,12 @@ exports.requestPasswordResetCode = (req, res) => {
                         }
                     }
                     catch(err) {
-                        res.status(500).json({status: 500, data: {errorCode: "internal_server_error", error: err}});
+                        res.json({status: 500, data: {errorCode: "internal_server_error", error: err}});
                     }
                     finally {
                         const strPhone = phone.toString();
                         const lastFourDigits = strPhone.slice(6, 10);
-                        res.status(202).json({status: 202, data: {email: account.email, tel: lastFourDigits}});
+                        res.json({status: 202, data: {email: account.email, tel: lastFourDigits}});
                     }
                 }
             });
@@ -208,18 +209,18 @@ exports.verifyResetCode = (req, res) => {
     ResetCode.findOne({where: {code}})
     .then(resetCode => {
         if (resetCode === null) {
-            res.status(404).json({status: 404, data: {errorCode: "reset_code_not_found"}});
+            res.json({status: 404, data: {errorCode: "reset_code_not_found"}});
         }
         else {
             convertUsernameToKSN(username)
-            .catch(err => res.status(500).json({status: 500, data: {errorCode: err.errorCode}}))
+            .catch(err => res.json({status: 500, data: {errorCode: err.errorCode}}))
             .then(ksn => {
                 if (ksn === resetCode.ksn) {
                     ResetCode.destroy({where: {code}})
-                    .then(() => res.status(202).json({status: 202, data: {ksn}}));
+                    .then(() => res.json({status: 202, data: {ksn}}));
                 }
                 else {
-                    res.status(401).json({status: 401, data: {errorCode: "invalid_reset_code"}});
+                    res.json({status: 401, data: {errorCode: "invalid_reset_code"}});
                 }
             });
         }
@@ -240,25 +241,25 @@ exports.resetPassword = (req, res) => {
     Account.findOne({where: {ksn}})
     .catch(err => {
         //log errror
-        res.status(500).json({status: 500, data: {errorCode: "internal_server_error"}});
+        res.json({status: 500, data: {errorCode: "internal_server_error"}});
     })
     .then(account => {
         if (account === null) {
             //log erro
-            res.status(404).json({status: 404, data: {errorCode: "account_not_found"}});
+            res.json({status: 404, data: {errorCode: "account_not_found"}});
         }
         else {
             Account.update({bpassword}, {where: {ksn}})
             .catch(err => {
                 //log error
-                res.status(500).json({status: 500, data: {erroCode: "internal_server_error"}});
+                res.json({status: 500, data: {erroCode: "internal_server_error"}});
             })
             .then(update => {
                 try {
                     postage.sendPasswordResetNotification(account.email, account.fname);
                 }
                 finally {
-                    res.status(202).json({status: 202});
+                    res.json({status: 202});
                 }
             })
         }
@@ -273,8 +274,8 @@ exports.checkIfUsernameExists = (req, res) => {
 
     Account.findOne({where:{username}})
     .then(account => {
-        if (account === null) res.status(202).json({status:202, data:{exists:false}});
-        else res.status(202).json({status:202, data:{exists:true,fname:account.fname}});
+        if (account === null) res.json({status:202, data:{exists:false}});
+        else res.json({status:202, data:{exists:true,fname:account.fname}});
     });
 };
 
@@ -287,8 +288,8 @@ exports.checkIfEmailExists = (req, res) => {
 
     Account.findOne({where:{email}})
     .then(account => {
-        if (account === null) res.status(202).json({status:202, data:{exists:false}});
-        else res.status(202).json({status:202, data:{exists:true}});
+        if (account === null) res.json({status:202, data:{exists:false}});
+        else res.json({status:202, data:{exists:true}});
     });
 };
 
@@ -298,7 +299,7 @@ exports.checkIfPhoneExists = (req, res) => {
 
     Account.findOne({where:{phone_number}})
     .then(account => {
-        if (account === null) res.status(202).json({status:202, data:{exists:false}});
-        else res.status(202).json({status:202, data:{exists:true}});
+        if (account === null) res.json({status:202, data:{exists:false}});
+        else res.json({status:202, data:{exists:true}});
     });
 };
