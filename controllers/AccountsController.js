@@ -104,7 +104,7 @@ exports.signup = (req, res) => {
                     postage.sendWelcomeEmail(account.fname, account.email);
                 }
                 finally {
-                    res.json({status: 202, data: key});
+                    res.json({status: 202, data: {key}});
                 }
             });
         });
