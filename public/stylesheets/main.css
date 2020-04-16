@@ -13,7 +13,7 @@ h1 {
 p {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: normal;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 hr {
@@ -75,11 +75,11 @@ button:hover {
     background-color: #f8f8f8;
 }
 
-.helper_link {
+.helper-link {
     margin-top: -10px;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
     color: #797979;
-    font-size: 0.9em;
+    font-size: 0.8em;
     text-align: right;
     font-family: 'IBM Plex Mono', monospace;
     font-weight: bold;
@@ -87,34 +87,51 @@ button:hover {
     cursor: pointer;
 }
 
-.helper_link:hover {
+.helper-link:hover {
     color: #338EEE;
     text-decoration: underline;
 }
 
 .alert {
-    padding: 20px 0.8em;
-    background-color: #EB5757;
-    color: white;
-    margin-bottom: 15px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.9em;
+    padding-bottom: 5px;
+    color: #EB5757;
     text-align: left;
-    border-left: 5px red solid;
-    border-radius: 3px;
+    font-family: 'IBM Plex Mono';
+    font-weight: normal;
 }
-  
-.closebtn {
-    margin-left: 15px;
-    color: white;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;;
+
+.alert i {
+    color: red;
 }
-  
-.closebtn:hover {
-    color: #818181;
+
+.message {
+    font-size: 0.9em;
+    padding-bottom: 5px;
+    color: #27AE60;
+    text-align: left;
+    font-family: 'IBM Plex Mono';
+    font-weight: normal;
+}
+
+.message i {
+    color: green;
+}
+
+#password {
+    margin-bottom: 5px;;
+}
+
+#password-strength-bar {
+    width: 100%;
+    background-color: #F6F6F4;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+#bar {
+    width: 0%;
+    height: 6px;
 }
 
 .hidden {
@@ -132,17 +149,39 @@ button:hover {
     border: 1px solid #EB5757;
 }
 
+.success {
+    background: #DEFAE9;
+    border: 1px solid #27AE60;
+}
+
+.col {
+    width: 49%;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
 .outer {
-    margin-top: 5%;
+    margin-top: 3%;
     width: 100%;
     text-align: center;
 }
 
+#alldone-image {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
 .action-box {
-    width: 23%;
+    width: 25%;
     display: inline-block;
     margin: 0 auto;
-    padding: 70px 50px;
+    padding: 50px;
     background-color: white;
     border: 2px solid #E4E4E4;
     border-radius: 6px;

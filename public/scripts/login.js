@@ -3,23 +3,17 @@ var url = window.location.href;
 var params = url.split("?")[1];
 
 function executeContinue() {
-    $("#alert-box").addClass("hidden");
     $("button").addClass("loading");
-    $("#username").removeClass("error");
+    resetErrors();
 
     if ($("#username").val() === "") {
-        $("#alert-box").text("Please enter a username").removeClass("hidden");
-        $("#username").addClass("error");
+        displayAlert("Please enter a username", "#username");
     }
     else {
         if (onPasswordField) {
             var username = $("#username").val();
             var password = $("#password").val();
             var AIDN = getParameterByName("aidn");
-
-            console.log(username);
-            console.log(password);
-            console.log(AIDN);
     
             $.post("/api/accounts/login", {username,password,AIDN}, function(data, status){
                 if (data.status === 202) {
@@ -28,18 +22,9 @@ function executeContinue() {
     
                     window.location.href = callback+"?key="+key;
                 }
-                else if (data.status === 406) {
-                    $("#alert-box").text("Password incorrect, try again").removeClass("hidden");
-                    $("#username").addClass("error");
-                }
-                else if (data.status === 404) {
-                    $("#alert-box").text("Account not found").removeClass("hidden");
-                    $("#username").addClass("error");
-                }
-                else {
-                    $("#alert-box").text("Internal server error, please try again later :(").removeClass("hidden");
-                    $("#username").addClass("error");
-                }
+                else if (data.status === 406) displayAlert("Password incorrect, try again", "#password");
+                else if (data.status === 404) displayAlert("Account not found", "#password");
+                else if (data.status === 500) displayAlert("Internal server error!", "#password");
             });
         }
         else {
@@ -56,10 +41,7 @@ function executeContinue() {
                     $("#password").removeClass("hidden");
                     $("#password-helper-link").removeClass("hidden");
                 }
-                else {
-                    $("#alert-box").text("Username not found").removeClass("hidden");
-                    $("#username").addClass("error");
-                }
+                else displayAlert("Account not found with that username", "#username");
             });
         }
     }

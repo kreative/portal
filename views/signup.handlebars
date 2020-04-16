@@ -1,4 +1,52 @@
-<div id="login-contents">
-    <h1>SIgnup for Portal</h1>
-    <p>To continue to </p>
+<div id="signup-contents">
+    <h1>Signup with Portal</h1>
+    <p class="subtitle">and continue to {{ appName }}</p>
+    <div id="form-section">
+        <div class="alert hidden" id="name-section-alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="text"></span>
+        </div>
+        <div id="name-section">
+            <div class="col left" id="fname-section">
+                <input placeholder="John" type="text" class="input_text" id="fname">
+            </div>
+            <div class="col right" id="lname-section">
+                <input placeholder="Doe" type="text" class="input_text" id="lname">
+            </div>
+        </div>
+        <div id="username-section">
+            <div class="alert hidden" id="username-alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="text"></span>
+            </div>
+            <div class="message hidden" id="username-message">
+                <i class="fas fa-check-circle"></i>
+                <span id="text">Username is availible :)</span>
+            </div>
+            <input placeholder="Username" type="text" class="input_text" id="username">
+        </div>
+        <div id="email-section">
+            <div class="alert hidden" id="email-alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="text"></span>
+            </div>
+            <input placeholder="Email" type="text" class="input_text" id="email">
+        </div>
+        <div id="password-section">
+            <div class="alert hidden" id="password-alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="text"></span>
+            </div>
+            <input placeholder="Password" type="password" class="input_text" id="password">
+            <div id="password-strength-bar"><div id="bar"></div></div>
+        </div>
+        <button type="submit" id="continue-btn">Continue</button>
+        <hr>
+        <button type="submit" class="btn_outline" id="login-btn">Click here to login</button>
+    </div>
+    <div class="hidden" id="goback-section">
+        <img src="assets/alldone.gif" id="alldone-image">
+        <button type="submit" id="goback-btn">Click to go back</button>
+    </div>
 </div>
+<script src="scripts/signup.js"></script>

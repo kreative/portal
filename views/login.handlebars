@@ -1,16 +1,24 @@
 <div id="login-contents">
     <h1>Login with Portal</h1>
     <p class="subtitle">and continue to {{ appName }}</p>
-    <div class="alert hidden" id="alert-box">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        This is an alert box.
+    <div id="username-section">
+        <div class="alert hidden" id="username-alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="text"></span>
+        </div>
+        <input placeholder="Username" type="text" class="input_text" id="username">
+        <p class="helper-link" id="username-helper-link">Forgot your username?</p>
     </div>
-    <input placeholder="Username" type="text" class="input_text" id="username">
-    <p class="helper_link" id="username-helper-link">Forgot your username?</p>
-    <input placeholder="Password" type="password" class="input_text active hidden" id="password">
-    <p class="helper_link hidden" id="password-helper-link">Forgot your password?</p>
+    <div id="password-section">
+        <div class="alert hidden" id="password-alert">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="text"></span>
+        </div>
+        <input placeholder="Password" type="password" class="input_text hidden" id="password">
+        <p class="helper-link hidden" id="password-helper-link">Forgot your password?</p>
+    </div>
     <button type="submit" id="continue-btn">Continue</button>
     <hr>
-    <button type="button" class="btn_outline" id="signup-btn">Signup with Portal</button>
+    <button type="submit" class="btn_outline" id="signup-btn">Signup for an account</button>
 </div>
 <script src="scripts/login.js"></script>

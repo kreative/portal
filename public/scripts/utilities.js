@@ -7,3 +7,33 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
+
+function displayAlert(text, element) {
+    $(element+"-alert").removeClass("hidden");
+    $(element+"-alert #text").text(text);
+    $(element).addClass("error");
+}
+
+function displaySuccess(element) {
+    $(element+"-message").removeClass("hidden");
+    $(element).addClass("success");
+}
+
+function hideAlert() {
+    $(".alert").addClass("hidden");
+}
+
+function resetErrors() {
+    hideAlert();
+    $(".input_text").removeClass("error");
+}
+
+function turnOffErrors(element) {
+    $(element+"-alert").addClass("hidden");
+    $(element).removeClass("error");
+}
+
+function turnOffSuccess(element) {
+    $(element+"-message").addClass("hidden");
+    $(element).removeClass("success");
+}
