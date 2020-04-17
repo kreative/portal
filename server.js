@@ -64,4 +64,4 @@ server.post('/api/organizations', verifyKeyMiddleware, organizations.createOrgan
 // postage routes
 server.get('/api/postage/test/:email', postage.emailTest);
 
-server.listen(PORT, '127.0.0.1', console.log("Portal is ready when you are."+PORT));
+server.listen(PORT, console.log("Portal is ready when you are."+PORT));
