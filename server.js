@@ -10,7 +10,6 @@ const helmet = require("helmet");
 const server = express();
 const PORT = process.env.SERVERPORT || 3000;
 const DB = require("./config/db").sequelize;
-const LOGGER = require("./config/logger");
 
 const accounts = require("./controllers/AccountsController");
 const appchains = require("./controllers/AppchainsController");
@@ -33,8 +32,8 @@ server.engine('handlebars', exphbs({defaultLayout: 'main'}));
 server.set('view engine', 'handlebars');
 
 DB.authenticate()
-.then(() => LOGGER.info('Portal DB is operational.'))
-.catch(err => LOGGER.error({message: 'Connection to Portal DB failed', meta: err}));
+.then(() => console.log('Portal DB is operational.'))
+.catch(err => console.log({message: 'Connection to Portal DB failed', meta: err}));
 
 // basic routes
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
@@ -65,4 +64,4 @@ server.post('/api/organizations', verifyKeyMiddleware, organizations.createOrgan
 // postage routes
 server.get('/api/postage/test/:email', postage.emailTest);
 
-server.listen(PORT, '127.0.0.1', LOGGER.info("Portal is ready when you are."));
+server.listen(PORT, '127.0.0.1', console.log("Portal is ready when you are."));
