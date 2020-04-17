@@ -17,5 +17,5 @@ workflows:
       jobs:
         - build-and-test
         - heroku/deploy-via-git:
-            - requires:
+            requires:
               - build-and-test
