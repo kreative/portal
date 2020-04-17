@@ -188,6 +188,18 @@ button:hover {
     text-align: center;
 }
 
+.action-box-noutline {
+    margin-top: 200px;
+    display: inline-block;
+    margin: 0 auto;
+    background-color: white;
+    text-align: center;
+}
+
+.mono {
+    font-family: monospace;
+}
+
 #kreativelogo {
     fill: black;
     margin-bottom: 15px;
