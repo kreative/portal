@@ -12,6 +12,12 @@ const verifyKey = require("../utils/VerifyKey");
 
 exports.getLoginPage = (req, res) => {
     const appNameRaw = req.query.appname;
+
+    if (appNameRaw === undefined) {
+        // log to iris
+        res.redirect("/404");
+    }
+
     const appName = appNameRaw.replace("+", " ");
 
     res.render('login', {appName});
@@ -20,6 +26,12 @@ exports.getLoginPage = (req, res) => {
 
 exports.getSignupPage = (req, res) => {
     const appNameRaw = req.query.appname;
+    
+    if (appNameRaw === undefined) {
+        // log to iris
+        res.redirect("/404");
+    }
+
     const appName = appNameRaw.replace("+", " ");
 
     res.render('signup', {appName});
@@ -267,39 +279,32 @@ exports.resetPassword = (req, res) => {
 };
 
 
-// this method will be used by the client to verify that the username is unique
-// before sending over all the data to the signup method
-exports.checkIfUsernameExists = (req, res) => {
-    const username = req.params.username;
+exports.checkIfCredExists = (req, res) => {
+    const type = req.body.type;
+    const cred = req.body.cred;
 
-    Account.findOne({where:{username}})
-    .then(account => {
-        if (account === null) res.json({status:202, data:{exists:false}});
-        else res.json({status:202, data:{exists:true,fname:account.fname}});
-    });
-};
+    if (type === "username") {
+        Account.findOne({where:{username:cred}})
+        .then(account => {
+            if (account === null) res.json({status:202, data:{exists:false}});
+            else res.json({status:202, data:{exists:true,fname:account.fname}});
+        });
+    }
+    else if (type === "email") {
+        Account.findOne({where:{email:cred}})
+        .then(account => {
+            if (account === null) res.json({status:202, data:{exists:false}});
+            else res.json({status:202, data:{exists:true}});
+        });
+    }
+    else if (type === "phone") {
+        Account.findOne({where:{phone_number:cred}})
+        .then(account => {
+            if (account === null) res.json({status:202, data:{exists:false}});
+            else res.json({status:202, data:{exists:true}});
+        });
+    }
+    else {
 
-
-// this method will be used by the client to verify that the email is unique
-// and that the account doesn't exist
-// before sending over all the data to the signup method
-exports.checkIfEmailExists = (req, res) => {
-    const email = req.params.email;
-
-    Account.findOne({where:{email}})
-    .then(account => {
-        if (account === null) res.json({status:202, data:{exists:false}});
-        else res.json({status:202, data:{exists:true}});
-    });
-};
-
-
-exports.checkIfPhoneExists = (req, res) => {
-    const phone_number = req.params.phone;
-
-    Account.findOne({where:{phone_number}})
-    .then(account => {
-        if (account === null) res.json({status:202, data:{exists:false}});
-        else res.json({status:202, data:{exists:true}});
-    });
+    }
 };

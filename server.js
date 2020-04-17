@@ -37,6 +37,7 @@ DB.authenticate()
 
 // basic routes
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
+server.get('/404', (req, res) => res.render('404', {layout: 'homeLayout'}));
 
 // accounts routes
 server.get('/login', accounts.getLoginPage);
@@ -44,9 +45,7 @@ server.get('/signup', accounts.getSignupPage);
 server.get('/passwordreset', accounts.getRequestResetPasswordPage);
 server.get('/resetpassword', accounts.getResetPasswordPage);
 server.get('/findusername', accounts.getFindUsernamePage);
-server.get('/api/check/u/:username', accounts.checkIfUsernameExists);
-server.get('/api/check/e/:email', accounts.checkIfEmailExists);
-server.get('/api/check/p/:phone', accounts.checkIfPhoneExists);
+server.post('/api/check', accounts.checkIfCredExists);
 server.post('/api/accounts/signup', accounts.signup);
 server.post('/api/accounts/login', accounts.login);
 server.post('/api/accounts/logout', verifyKeyMiddleware, accounts.logout);

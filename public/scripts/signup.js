@@ -76,7 +76,7 @@ $("#username").keyup(function(){
 
         if (username !== "") {
             if (validateUsername(username) === true) {
-                $.get("/api/check/u/"+username, function(data, status){
+                $.post("/api/check", {type:"username",cred:username}, function(data, status){
                     if (data.data.exists === true) {
                         usernameWorks = false;
                         displayAlert("Username is already taken", "#username")
@@ -104,7 +104,7 @@ $("#email").keyup(function(){
 
         if (email !== "") {
             if (validateEmail(email) === true) {
-                $.get("/api/check/e/"+email, function(data, status){
+                $.get("/api/check", {type:"email",cred:email}, function(data, status){
                     if (data.data.exists === true) {
                         emailWorks = false;
                         displayAlert("Email already in use", "#email")

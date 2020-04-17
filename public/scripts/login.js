@@ -30,7 +30,7 @@ function executeContinue() {
         else {
             var username = $("#username").val();
     
-            $.get("/api/check/u/"+username, function(data, status){
+            $.post("/api/check", {type:"username",cred:username}, function(data, status){
                 if (data.data.exists === true) {
                     var fname = data.data.fname;
                     onPasswordField = true;
