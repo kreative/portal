@@ -8,7 +8,7 @@ const useragent = require("express-useragent");
 const helmet = require("helmet");
 
 const server = express();
-const PORT = process.env.SERVERPORT || 3000;
+const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
 const accounts = require("./controllers/AccountsController");
@@ -64,4 +64,4 @@ server.post('/api/organizations', verifyKeyMiddleware, organizations.createOrgan
 // postage routes
 server.get('/api/postage/test/:email', postage.emailTest);
 
-server.listen(PORT, '127.0.0.1', console.log("Portal is ready when you are."));
+server.listen(PORT, '127.0.0.1', console.log("Portal is ready when you are."+PORT));
