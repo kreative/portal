@@ -118,8 +118,8 @@ button:hover {
     color: green;
 }
 
-#password {
-    margin-bottom: 5px;;
+.password {
+    margin-bottom: 5px;
 }
 
 #password-strength-bar {
@@ -172,7 +172,7 @@ button:hover {
     text-align: center;
 }
 
-#alldone-image {
+.alldone-image {
     margin-bottom: 20px;
     width: 100%;
 }

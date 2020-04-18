@@ -19,6 +19,7 @@ const postage = require("./controllers/PostageController");
 const verifyKeyMiddleware = require("./utils/VerifyKeyMiddleware");
 const getIPMiddleware = require("./utils/GetIPMiddleware");
 const lookupIPInfoMiddleware = require("./utils/LookupIPInfoMiddleware");
+const validateRedirectData = require("./utils/ValidateRedirectData");
 
 server.use(helmet());
 server.use(bodyParser.json());
@@ -40,12 +41,12 @@ server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
 server.get('/404', (req, res) => res.render('404', {layout: 'homeLayout'}));
 
 // accounts routes
-server.get('/login', accounts.getLoginPage);
-server.get('/signup', accounts.getSignupPage);
-server.get('/passwordreset', accounts.getRequestResetPasswordPage);
-server.get('/resetpassword', accounts.getResetPasswordPage);
-server.get('/findusername', accounts.getFindUsernamePage);
+server.get('/login', validateRedirectData, accounts.getLoginPage);
+server.get('/signup', validateRedirectData, accounts.getSignupPage);
+server.get('/resetpassword', validateRedirectData, accounts.getResetPasswordPage);
+server.get('/findusername', validateRedirectData, accounts.getFindUsernamePage);
 server.post('/api/check', accounts.checkIfCredExists);
+server.post('/api/convertemail', accounts.convertEmailToUsername);
 server.post('/api/accounts/signup', accounts.signup);
 server.post('/api/accounts/login', accounts.login);
 server.post('/api/accounts/logout', verifyKeyMiddleware, accounts.logout);

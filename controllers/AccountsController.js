@@ -10,49 +10,28 @@ const postage = require("../utils/PostageUtils");
 const signal = require("../utils/SignalUtils");
 const verifyKey = require("../utils/VerifyKey");
 
+
 exports.getLoginPage = (req, res) => {
-    const appNameRaw = req.query.appname;
-
-    if (appNameRaw === undefined) {
-        // log to iris
-        res.redirect("/404");
-    }
-
-    const appName = appNameRaw.replace("+", " ");
-
-    res.render('login', {appName});
+    res.render('login', {appName: res.locals.appName});
 };
 
 
 exports.getSignupPage = (req, res) => {
-    const appNameRaw = req.query.appname;
-    
-    if (appNameRaw === undefined) {
-        // log to iris
-        res.redirect("/404");
-    }
-
-    const appName = appNameRaw.replace("+", " ");
-
-    res.render('signup', {appName});
-};
-
-
-exports.getRequestResetPasswordPage = (req, res) => {
-
+    res.render('signup', {appName: res.locals.appName});
 };
 
 
 exports.getResetPasswordPage = (req, res) => {
-
+    res.render('resetPassword', {appName: res.locals.appName});
 };
 
 
 exports.getFindUsernamePage = (req, res) => {
-
+    res.render('findUsername', {appName: res.locals.appName});
 };
 
 
+// method for external applications to verify a key
 exports.verifyKey = (req, res) => {
     const key = req.body.key;
     const ksn = req.body.ksn;
@@ -178,34 +157,23 @@ exports.requestPasswordResetCode = (req, res) => {
             res.json({status: 404, data: {errorCode: "no_account_found"}});
         }
         else {
-            const phone = account.phone_number;
-            const cc = account.phone_country_code;
-
             createResetCode(account.ksn)
             .catch(err => {
                 res.json({status: 500, data: {errorCode: "internal_server_error"}})
             })
             .then(resetCode => {
-                if (!["email", "sms"].includes(deliveryType)) {
+                if (!["email"].includes(deliveryType)) {
                     res.json({status: 404, data: {errorCode: "delivery_type_invalid"}});
                 }
                 else {
                     try {
-                        if (deliveryType === "email") {
-                            postage.sendResetCode(account.email, resetCode, account.fname);
-                        }
-                        else if (deliveryType === "sms") {
-                            const tel = `+${cc.toString()}${phone.toString()}`;
-                            signal.sendResetCode(tel, resetCode, account.fname);
-                        }
+                        postage.sendResetCode(account.email, resetCode, account.fname);
                     }
                     catch(err) {
                         res.json({status: 500, data: {errorCode: "internal_server_error", error: err}});
                     }
                     finally {
-                        const strPhone = phone.toString();
-                        const lastFourDigits = strPhone.slice(6, 10);
-                        res.json({status: 202, data: {email: account.email, tel: lastFourDigits}});
+                        res.json({status: 202, data: {email: account.email}});
                     }
                 }
             });
@@ -245,7 +213,7 @@ exports.verifyResetCode = (req, res) => {
 // that too, only after the reset code is verified
 exports.resetPassword = (req, res) => {
     const newPassword = req.body.new_password;
-    const ksn = req.headers['portal_ksn'];
+    const ksn = req.body.ksn;
 
     const salt = bcrypt.genSaltSync(12);
     const bpassword = bcrypt.hashSync(newPassword, salt);
@@ -264,7 +232,7 @@ exports.resetPassword = (req, res) => {
             Account.update({bpassword}, {where: {ksn}})
             .catch(err => {
                 //log error
-                res.json({status: 500, data: {erroCode: "internal_server_error"}});
+                res.json({status: 500, data: {errorCode: "internal_server_error"}});
             })
             .then(update => {
                 try {
@@ -308,3 +276,19 @@ exports.checkIfCredExists = (req, res) => {
 
     }
 };
+
+
+exports.convertEmailToUsername = (req, res) => {
+    const email = req.body.email;
+
+    Account.findOne({where:{email}})
+    .then(account => {
+        if (account === null) res.json({status:404, data:{errorCode:"account_not_found"}});
+        else {
+            const username = account.username;
+            const fname = account.fname;
+
+            res.json({status:202, data:{username, fname}});
+        }
+    });
+}

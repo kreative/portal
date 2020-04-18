@@ -3,8 +3,13 @@ var emailTimerId;
 var portalKey;
 var usernameWorks = false;
 var emailWorks = false;
-var url = window.location.href;
-var params = url.split("?")[1];
+
+var endUsername;
+
+var callback = getParameterByName("callback");
+var aidn = getParameterByName("aidn");
+var appName = getParameterByName("appname");
+var params = "appname="+appName+"&aidn="+aidn+"&callback="+callback;
 
 window.onload = function() {
     $("#username").val("");
@@ -46,6 +51,7 @@ function executeSignup() {
                         var appname = appnameRaw.replace("+", " ");
 
                         portalKey = data.data.key;
+                        endUsername = username;
                         $("#form-section").addClass("hidden");
                         $("h1").text("You're all done!");
                         $(".subtitle").text(fname+", you're all set to go back to "+appname);
@@ -83,7 +89,7 @@ $("#username").keyup(function(){
                     }
                     else {
                         usernameWorks = true;
-                        displaySuccess("#username");
+                        displaySuccess("Username availible :)", "#username");
                     }
                 });
             }
@@ -124,26 +130,8 @@ $("#password").keyup(function(){
     var password = $("#password").val();
     var username = $("#username").val();
     var email = $("#email").val();
-    var result = zxcvbn(password, [username, email]);
 
-    if (password !== "") {
-        if (result.score <= 2) {
-            $("#bar")
-                .css("width", "30%")
-                .css("background-color", "#B51C1C");
-        }
-        else if (result.score === 3) {
-            $("#bar")
-                .css("width", "70%")
-                .css("background-color", "#FFB800");
-        }
-        else {
-            $("#bar")
-                .css("width", "100%")
-                .css("background-color", "#176A3A");
-        }
-    }
-    else $("#bar").css("width", "0%");
+    updatePasswordStrengthBar(password, [username, email]);
 });
 
 $("#username").blur(function(){
@@ -151,20 +139,16 @@ $("#username").blur(function(){
 });
 
 $("#login-btn").click(function(){
-    window.location.href = "/login?"+params;
+    window.location.href = "/login?"+params+"&username_prefill="+endUsername;
 });
 
 $("#goback-btn").click(function(){
-    var callbackRaw = getParameterByName("callback");
-    var callback = decodeURIComponent(callbackRaw);
-
-    window.location.href = callback+"?key="+portalKey;
+    var theCallback = decodeURIComponent(callback);
+    window.location.href = theCallback+"?key="+portalKey;
 });
 
 $("#continue-btn").click(executeSignup);
 
 $(document).on('keypress', function(e){
-    if (e.which === 13) {
-        executeSignup();
-    }
+    if (e.which === 13) executeSignup();
 });

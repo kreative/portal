@@ -1,38 +1,57 @@
 var onPasswordField = false;
-var url = window.location.href;
-var params = url.split("?")[1];
+
+var callback = getParameterByName("callback");
+var aidn = getParameterByName("aidn");
+var appName = getParameterByName("appname");
+var params = "appname="+appName+"&aidn="+aidn+"&callback="+callback;
+
+var username;
+var fname;
+
+window.onload = function() {
+    $("#username").val("");
+    $("#password").val("");
+
+    var usernamePrefill = getParameterByName("username_prefill");
+    if (usernamePrefill) $("#username").val(usernamePrefill);
+};
 
 function executeContinue() {
     $("button").addClass("loading");
     resetErrors();
 
-    if ($("#username").val() === "") {
+    username = $("#username").val();
+
+    if (username === "") {
         displayAlert("Please enter a username", "#username");
     }
     else {
         if (onPasswordField) {
-            var username = $("#username").val();
             var password = $("#password").val();
-            var AIDN = getParameterByName("aidn");
+
+            if (password === "") {
+                displayAlert("Password is required", "#password");
+            }
+            else {
+                var AIDN = getParameterByName("aidn");
     
-            $.post("/api/accounts/login", {username,password,AIDN}, function(data, status){
-                if (data.status === 202) {
-                    var key = data.data.key;
-                    var callback = decodeURIComponent(getParameterByName("callback"));
-    
-                    window.location.href = callback+"?key="+key;
-                }
-                else if (data.status === 406) displayAlert("Password incorrect, try again", "#password");
-                else if (data.status === 404) displayAlert("Account not found", "#password");
-                else if (data.status === 500) displayAlert("Internal server error!", "#password");
-            });
+                $.post("/api/accounts/login", {username,password,AIDN}, function(data, status){
+                    if (data.status === 202) {
+                        var key = data.data.key;
+                        var callback = decodeURIComponent(getParameterByName("callback"));
+        
+                        window.location.href = callback+"?key="+key;
+                    }
+                    else if (data.status === 406) displayAlert("Password incorrect, try again", "#password");
+                    else if (data.status === 404) displayAlert("Account not found", "#password");
+                    else if (data.status === 500) displayAlert("Internal server error!", "#password");
+                });
+            }
         }
         else {
-            var username = $("#username").val();
-    
             $.post("/api/check", {type:"username",cred:username}, function(data, status){
                 if (data.data.exists === true) {
-                    var fname = data.data.fname;
+                    fname = data.data.fname;
                     onPasswordField = true;
 
                     $("#username-helper-link").addClass("hidden");
@@ -58,13 +77,11 @@ $("#username-helper-link").click(function(){
 });
 
 $("#password-helper-link").click(function(){
-    window.location.href = "/passwordreset"+params;
+    window.location.href = "/resetpassword?"+params+"&username_prefill="+username;
 });
 
 $("#continue-btn").click(executeContinue);
 
 $(document).on('keypress', function(e){
-    if (e.which === 13) {
-        executeContinue();
-    }
+    if (e.which === 13) executeContinue();
 });

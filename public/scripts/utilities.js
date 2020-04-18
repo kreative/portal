@@ -14,8 +14,9 @@ function displayAlert(text, element) {
     $(element).addClass("error");
 }
 
-function displaySuccess(element) {
+function displaySuccess(text, element) {
     $(element+"-message").removeClass("hidden");
+    $(element+"-message #text").text(text);
     $(element).addClass("success");
 }
 

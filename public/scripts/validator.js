@@ -45,3 +45,26 @@ function evaluateEmptiness(username, password, fname, lname, email, callback) {
     }
     else callback();
 }
+
+function updatePasswordStrengthBar(password, personalVals) {
+    var result = zxcvbn(password, personalVals);
+
+    if (password !== "") {
+        if (result.score <= 2) {
+            $("#bar")
+                .css("width", "30%")
+                .css("background-color", "#B51C1C");
+        }
+        else if (result.score === 3) {
+            $("#bar")
+                .css("width", "70%")
+                .css("background-color", "#FFB800");
+        }
+        else {
+            $("#bar")
+                .css("width", "100%")
+                .css("background-color", "#176A3A");
+        }
+    }
+    else $("#bar").css("width", "0%");
+}
