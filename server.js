@@ -14,9 +14,9 @@ const DB = require("./config/db").sequelize;
 const accounts = require("./controllers/AccountsController");
 const appchains = require("./controllers/AppchainsController");
 const organizations = require("./controllers/OrganizationsController");
-const postage = require("./controllers/PostageController");
+const serviceKeys = require("./controllers/ServiceKeyController");
 
-const verifyKeyMiddleware = require("./utils/VerifyKeyMiddleware");
+const verifyKey = require("./utils/VerifyKeyMiddleware");
 const getIPMiddleware = require("./utils/GetIPMiddleware");
 const lookupIPInfoMiddleware = require("./utils/LookupIPInfoMiddleware");
 const validateRedirectData = require("./utils/ValidateRedirectData");
@@ -49,19 +49,15 @@ server.post('/api/check', accounts.checkIfCredExists);
 server.post('/api/convertemail', accounts.convertEmailToUsername);
 server.post('/api/accounts/signup', accounts.signup);
 server.post('/api/accounts/login', accounts.login);
-server.post('/api/accounts/logout', verifyKeyMiddleware, accounts.logout);
+server.post('/api/accounts/logout', verifyKey, accounts.logout);
 server.post('/api/accounts/verify', accounts.verifyKey);
 server.post('/api/accounts/resetcode', accounts.requestPasswordResetCode);
 server.post('/api/accounts/resetcode/verify', accounts.verifyResetCode);
 server.post('/api/accounts/resetpassword', accounts.resetPassword);
-
-// appchains routes
-server.post('/api/appchains',verifyKeyMiddleware, appchains.createAppchain);
-
-// organizations routes
-server.post('/api/organizations', verifyKeyMiddleware, organizations.createOrganization)
-
-// postage routes
-server.get('/api/postage/test/:email', postage.emailTest);
+server.post('/api/appchains', verifyKey, appchains.createAppchain);
+server.delete('/api/appchains', verifyKey, appchains.deleteAppchain);
+server.post('/api/organizations', verifyKey, organizations.createOrganization);
+server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
+server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey)
 
 server.listen(PORT, console.log("Portal is ready when you are."+PORT));

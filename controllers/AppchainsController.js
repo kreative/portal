@@ -37,3 +37,17 @@ exports.createAppchain = (req, res) => {
         ));
     });
 };
+
+exports.deleteAppchain = (req, res) => {
+    const aidn = req.body.aidn;
+
+    Appchain.destroy({where:{aidn}})
+    .catch(err => {
+        console.log(err); //log to iris
+        res.json({status:500, data:{errorCode: "internal_server_error"}});
+    })
+    .then(() => {
+        //log to iris
+        res.json({status:202});
+    });
+};
