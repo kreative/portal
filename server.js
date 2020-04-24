@@ -8,7 +8,6 @@ const useragent = require("express-useragent");
 const helmet = require("helmet");
 
 const server = express();
-const logger = require("./config/logger");
 const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
@@ -59,4 +58,4 @@ server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
 server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
 server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
 
-server.listen(PORT, logger.info(`portal online::::${PORT}`));
+server.listen(PORT, console.log(`portal online::::${PORT}`));
