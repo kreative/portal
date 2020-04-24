@@ -50,19 +50,17 @@ exports.verifyServiceKey = (req, res) => {
             console.log("invalid_service_key"); // log to iris
             res.json({status:401, data:{errorCode:"invalid_service_key"}});
         }
-
-        if (payload.recieving_aidn !== recieving_aidn) {
+        else if (payload.recieving_aidn !== recieving_aidn) {
             console.log("recieving_aidn_mismatch"); // log to iris
             res.json({status:401, data:{errorCode:"recieving_aidn_mismatch"}});
         }
-
-        if (payload.calling_aidn !== calling_aidn) {
+        else if (payload.calling_aidn !== calling_aidn) {
             console.log("calling_aidn_mismatch"); // log to iris
             res.json({status:401, data:{errorCode:"calling_aidn_mismatch"}});
         }
-
-        res.json({status:202, data:{statusCode:"verification_passed"}});
-
+        else {
+            res.json({status:202, data:{statusCode:"verification_passed"}});
+        }
     });
 };
 
