@@ -38,6 +38,11 @@ exports.createAppchain = (req, res) => {
     });
 };
 
+
+// returns list of appchains belonging to a KSN
+exports.getAppchains = (req, res) => {};
+
+
 exports.deleteAppchain = (req, res) => {
     const aidn = req.body.aidn;
 

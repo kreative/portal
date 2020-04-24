@@ -33,6 +33,7 @@
     "ipware": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "log4js": "^6.1.2",
+    "logzio-nodejs": "^2.0.1",
     "mailgun-js": "^0.22.0",
     "mailgun.js": "^2.0.1",
     "nanoid": "^2.1.11",

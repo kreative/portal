@@ -37,6 +37,9 @@ exports.createServiceKey = (req, res) => {
 };
 
 
+exports.getServiceKeys = (req, res) => {};
+
+
 exports.verifyServiceKey = (req, res) => {
     const service_key = req.body.service_key;
     const recieving_aidn = req.body.recieving_aidn;
@@ -62,3 +65,18 @@ exports.verifyServiceKey = (req, res) => {
 
     });
 };
+
+
+exports.deleteServiceKey = (req, res) => {
+    const skidn = req.body.skidn;
+
+    ServiceKey.destroy({where:{skidn}})
+    .catch(err => {
+        console.log(err); // log to iris
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(() => {
+        //log to iris
+        res.json({status:202});
+    })
+}

@@ -8,6 +8,7 @@ const useragent = require("express-useragent");
 const helmet = require("helmet");
 
 const server = express();
+const logger = require("./config/logger");
 const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
@@ -36,11 +37,8 @@ DB.authenticate()
 .then(() => console.log('Portal DB is operational.'))
 .catch(err => console.log({message: 'Connection to Portal DB failed', meta: err}));
 
-// basic routes
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
 server.get('/404', (req, res) => res.render('404', {layout: 'homeLayout'}));
-
-// accounts routes
 server.get('/login', validateRedirectData, accounts.getLoginPage);
 server.get('/signup', validateRedirectData, accounts.getSignupPage);
 server.get('/resetpassword', validateRedirectData, accounts.getResetPasswordPage);
@@ -58,6 +56,7 @@ server.post('/api/appchains', verifyKey, appchains.createAppchain);
 server.delete('/api/appchains', verifyKey, appchains.deleteAppchain);
 server.post('/api/organizations', verifyKey, organizations.createOrganization);
 server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
-server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey)
+server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
+server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
 
-server.listen(PORT, console.log("Portal is ready when you are."+PORT));
+server.listen(PORT, logger.info(`portal online::::${PORT}`));

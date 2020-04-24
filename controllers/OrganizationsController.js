@@ -26,4 +26,13 @@ exports.createOrganization = (req, res) => {
             }
         });
     });
-}
+};
+
+// returns list of organizations belonging to a KSN
+exports.getOrganizations = (req, res) => {}
+
+
+exports.updateOrganization = (req, res) => {};
+
+
+exports.removeOrganization = (req, res) => {};
