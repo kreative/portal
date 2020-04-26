@@ -8,6 +8,7 @@ const useragent = require("express-useragent");
 const helmet = require("helmet");
 
 const server = express();
+const IRIS = require("./config/iris");
 const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
@@ -32,10 +33,6 @@ server.use(lookupIPInfoMiddleware);
 server.engine('handlebars', exphbs({defaultLayout: 'main'}));
 server.set('view engine', 'handlebars');
 
-DB.authenticate()
-.then(() => console.log('Portal DB is operational.'))
-.catch(err => console.log({message: 'Connection to Portal DB failed', meta: err}));
-
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
 server.get('/404', (req, res) => res.render('404', {layout: 'homeLayout'}));
 server.get('/login', validateRedirectData, accounts.getLoginPage);
@@ -58,4 +55,6 @@ server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
 server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
 server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
 
-server.listen(PORT, console.log(`portal online::::${PORT}`));
+DB.authenticate()
+.then(() => server.listen(PORT, IRIS.info(`portal online::::${PORT}`, {}, [])))
+.catch(err => IRIS.error("Portal DB failed to connect", err, ["database"]));

@@ -57,11 +57,13 @@ function executeSignup() {
                         $(".subtitle").text(fname+", you're all set to go back to "+appname);
                         $("#goback-section").removeClass("hidden");
                     }
-                    else if (data.status === 500) {
+                    else if (data.status === 401) {
                         if (data.data.errorCode === "email_or_phone_inuse") {
                             displayAlert("Email is inuse, please use another", "#email");
                         }
-                        else alert("Internal server error, please try again later");
+                    }
+                    else if (data.status === 500) {
+                        alert("Internal server error, please try again later");
                     }
 
                 });
