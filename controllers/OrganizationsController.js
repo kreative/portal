@@ -1,12 +1,15 @@
 const Organization = require("../models/OrganizationModel");
 const generateOIDN = require("../utils/GenerateOIDN");
 const postage = require("../utils/PostageUtils");
+const IRIS = require("../config/iris");
 
 exports.createOrganization = (req, res) => {
     const ksn = req.headers['portal_ksn'];
     const name = req.body.name;
     const admin_email = req.body.admin_email;
     const createdat = Date.now();
+
+    IRIS.info("creating organization started",{ksn,admin_email},["api"]);
 
     generateOIDN(oidn => {
         Organization.create({
@@ -16,12 +19,19 @@ exports.createOrganization = (req, res) => {
             admin_email,
             createdat
         })
-        .catch(err => res.json({status: 500, data: err}))
+        .catch(err => {
+            IRIS.critical("Organization.create failed",{ksn,admin_email},["api","ise"]);
+            res.json({status: 500, data: err})
+        })
         .then(org => {
             try {
                 postage.sendNewOrganizationCreatedEmail(admin_email, name);
             }
+            catch (err) {
+                IRIS.error("sendNewOrganizationCreatedEmail failed",{admin_email,oidn},["api","catch"]);
+            }
             finally {
+                IRIS.info("organization created perfectly",{oidn},["api","success"]);
                 res.json({status: 202, data: org});
             }
         });
