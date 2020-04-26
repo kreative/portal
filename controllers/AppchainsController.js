@@ -65,7 +65,7 @@ exports.deleteAppchain = (req, res) => {
         res.json({status:500, data:{errorCode: "internal_server_error"}});
     })
     .then(() => {
-        IRIS.info("destroyed appchain perfectly",{aidn},["api","success"])''
+        IRIS.info("destroyed appchain perfectly",{aidn},["api","success"]);
         res.json({status:202});
     });
 };

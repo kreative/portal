@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const useragent = require("express-useragent");
 const helmet = require("helmet");
+const Sentry = require("@sentry/node");
+
+Sentry.init({dsn:process.env.SENTRY_DSN});
 
 const server = express();
 const IRIS = require("./config/iris");
@@ -16,12 +19,14 @@ const accounts = require("./controllers/AccountsController");
 const appchains = require("./controllers/AppchainsController");
 const organizations = require("./controllers/OrganizationsController");
 const serviceKeys = require("./controllers/ServiceKeyController");
+const postage = require("./controllers/PostageController");
 
 const verifyKey = require("./utils/VerifyKeyMiddleware");
 const getIPMiddleware = require("./utils/GetIPMiddleware");
 const lookupIPInfoMiddleware = require("./utils/LookupIPInfoMiddleware");
 const validateRedirectData = require("./utils/ValidateRedirectData");
 
+server.use(Sentry.Handlers.requestHandler());
 server.use(helmet());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));
@@ -33,6 +38,8 @@ server.use(lookupIPInfoMiddleware);
 server.engine('handlebars', exphbs({defaultLayout: 'main'}));
 server.set('view engine', 'handlebars');
 
+server.get('/debug-sentry',(req, res) => {throw new Error('My first Sentry error!')});
+server.get('/postage-test/:email', postage.emailTest);
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
 server.get('/404', (req, res) => res.render('404', {layout: 'homeLayout'}));
 server.get('/login', validateRedirectData, accounts.getLoginPage);
@@ -55,6 +62,8 @@ server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
 server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
 server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
 
+server.use(Sentry.Handlers.errorHandler());
+
 DB.authenticate()
-.then(() => server.listen(PORT, IRIS.info(`portal online::::${PORT}`, {}, [])))
+.then(() => server.listen(PORT, console.log(`portal online::::${PORT}`)))
 .catch(err => IRIS.error("Portal DB failed to connect", err, ["database"]));
