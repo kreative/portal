@@ -1,20 +1,20 @@
-const generate = require('nanoid/generate');
+const nanoidGenerate = require('nanoid/generate');
 const jwt = require("jsonwebtoken");
-const generateCCN = require("../utils/GenerateCCN");
+const generate = require("../utils/Generate");
 const Keychain = require("../models/KeychainModel");
 
 const rawSecret = process.env.KEYCHAIN_SECURITY_CODE;
 const SECRET = Buffer.from(rawSecret, 'base64');
 
-const generateKeychain = (ksn, aidn) => {
+const createKeychain = (ksn, aidn) => {
     const time = Date.now();
-    const secureHash = generate("1234567890", 12);
+    const secureHash = nanoidGenerate("1234567890", 12);
     const key = jwt.sign({ksn, aidn, secureHash, time}, SECRET);
     const expired = false;
     const createdat = Date.now();
 
     return new Promise((resolve, reject) => {
-        generateCCN(ccn => {
+        generate.ccn(ccn => {
             Keychain.create({
                 ccn,
                 ksn,
@@ -29,4 +29,4 @@ const generateKeychain = (ksn, aidn) => {
     });
 };
 
-module.exports = generateKeychain;
+module.exports = createKeychain;

@@ -21,10 +21,10 @@ const organizations = require("./controllers/OrganizationsController");
 const serviceKeys = require("./controllers/ServiceKeyController");
 const postage = require("./controllers/PostageController");
 
-const verifyKey = require("./utils/VerifyKeyMiddleware");
-const getIPMiddleware = require("./utils/GetIPMiddleware");
-const lookupIPInfoMiddleware = require("./utils/LookupIPInfoMiddleware");
-const validateRedirectData = require("./utils/ValidateRedirectData");
+const verifyKey = require("./middleware/VerifyKeyMiddleware");
+const getIPMiddleware = require("./middleware/GetIP");
+const lookupIPInfoMiddleware = require("./middleware/LookupIPInfo");
+const validateRedirectData = require("./middleware/ValidateRedirectData");
 
 server.use(Sentry.Handlers.requestHandler());
 server.use(helmet());
@@ -41,7 +41,7 @@ server.set('view engine', 'handlebars');
 server.get('/debug-sentry',(req, res) => {throw new Error('My first Sentry error!')});
 server.get('/postage-test/:email', postage.emailTest);
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
-server.get('/404', (req, res) => res.render('404', {layout: 'homeLayout'}));
+server.get('/404', (req, res) => res.render('404', {layout: '404Layout'}));
 server.get('/login', validateRedirectData, accounts.getLoginPage);
 server.get('/signup', validateRedirectData, accounts.getSignupPage);
 server.get('/resetpassword', validateRedirectData, accounts.getResetPasswordPage);

@@ -1,7 +1,6 @@
 const Appchain = require("../models/AppchainModel");
 const Organization = require("../models/OrganizationModel");
-const generateAIDN = require("../utils/GenerateAIDN");
-const generateACN = require("../utils/GenerateACN");
+const generate = require("../utils/Generate");
 const postage = require("../utils/PostageUtils");
 const IRIS = require("../config/iris");
 
@@ -19,8 +18,8 @@ exports.createAppchain = (req, res) => {
             res.json({status: 404, data: {errorCode: "organization_not_found"}});
         }
 
-        generateACN(acn => 
-            generateAIDN(aidn => {
+        generate.acn(acn => 
+            generate.aidn(aidn => {
                 Appchain.create({
                     acn,
                     aidn,

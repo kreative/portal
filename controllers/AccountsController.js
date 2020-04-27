@@ -2,9 +2,9 @@ const bcrypt = require("bcryptjs");
 const Account = require("../models/AccountModel");
 const Keychain = require("../models/KeychainModel");
 const ResetCode = require("../models/ResetCodeModel");
-const generateKSN = require("../utils/GenerateKSN");
+const generate = require("../utils/Generate");
 const convertUsernameToKSN = require("../utils/ConvertUsernameToKsn");
-const generateKeychain = require("../utils/GenerateKeychain");
+const createKeychain = require("../utils/CreateKeychain");
 const createResetCode = require("../utils/CreateResetCode");
 const postage = require("../utils/PostageUtils");
 const verifyKey = require("../utils/VerifyKey");
@@ -75,7 +75,7 @@ exports.signup = (req, res) => {
 
     IRIS.info("signup started",{aidn,email,username},["api"]);
 
-    generateKSN(ksn => {
+    generate.ksn(ksn => {
         Account.create({
             ksn,
             username,
@@ -99,7 +99,7 @@ exports.signup = (req, res) => {
             }
         })
         .then(account => {
-            generateKeychain(account.ksn, aidn)
+            createKeychain(account.ksn, aidn)
             .catch(err => {
                 IRIS.critical("signup: generate keychain failed",{err},["api","catch","ise"]);
                 res.json({status: 500, data: err})
@@ -145,7 +145,7 @@ exports.login = (req, res) => {
             })
             .then(result => {
                 if (result) {
-                    generateKeychain(account.ksn, aidn)
+                    createKeychain(account.ksn, aidn)
                     .catch(err => {
                         IRIS.critical("login: keychain generation failed",{err},["api","ise"]);
                         res.json({status: 500, data: err});

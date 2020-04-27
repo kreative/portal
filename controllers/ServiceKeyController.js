@@ -1,7 +1,7 @@
-const generate = require('nanoid/generate');
+const nanoidGenerate = require('nanoid/generate');
 const jwt = require("jsonwebtoken");
 const ServiceKey = require("../models/ServiceKeyModel");
-const generateSKIDN = require("../utils/GenerateSKIDN");
+const generate = require("../utils/Generate");
 const IRIS = require("../config/iris");
 
 const rawSecret = process.env.SERVICEKEY_SECURITY_CODE;
@@ -13,12 +13,12 @@ exports.createServiceKey = (req, res) => {
     const description = req.body.description;
     const name = req.body.name;
     const createdat = Date.now();
-    const secureHash = generate("1234567890", 12);
+    const secureHash = nanoidGenerate("1234567890", 12);
     const service_key = jwt.sign({recieving_aidn, calling_aidn, createdat, secureHash}, SECRET);
 
     IRIS.info("createServiceKey started",{calling_aidn,recieving_aidn},["api"]);
 
-    generateSKIDN(skidn => {
+    generate.skidn(skidn => {
         ServiceKey.create({
             skidn,
             service_key,

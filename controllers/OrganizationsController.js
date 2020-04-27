@@ -1,5 +1,5 @@
 const Organization = require("../models/OrganizationModel");
-const generateOIDN = require("../utils/GenerateOIDN");
+const generate = require("../utils/Generate");
 const postage = require("../utils/PostageUtils");
 const IRIS = require("../config/iris");
 
@@ -11,7 +11,7 @@ exports.createOrganization = (req, res) => {
 
     IRIS.info("creating organization started",{ksn,admin_email},["api"]);
 
-    generateOIDN(oidn => {
+    generate.oidn(oidn => {
         Organization.create({
             oidn,
             ksn,
