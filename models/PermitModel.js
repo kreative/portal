@@ -11,9 +11,13 @@ const Permit = DB.define('permit', {
         type: Sequelize.BOOLEAN,
         allowNull: false
     },
-    issuer: {
+    designated_app: {
         type: Sequelize.BIGINT,
         allowNull: false,
+        references: {
+            model: 'appchain',
+            key: 'aidn'
+        }
     },
     permit_token: {
         type: Sequelize.TEXT,

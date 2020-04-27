@@ -56,9 +56,8 @@ exports.oidn = (callback) => {
     });
 };
 
-exports.permitID = (permitName, callback) => {
-    const number = generate("1234567890", 12);
-    const newPermitID = `${permitName}-${number}`;
+exports.permitID = (callback) => {
+    const newPermitID = parseInt(generate("1234567890", 12));
 
     Permit.findOne({where: {permit_id: newPermitID}})
     .then(permit => {
