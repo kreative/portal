@@ -49,7 +49,43 @@ exports.createWarrant = (req, res) => {
 
 // returns a boolean to represent whether or not
 // a warrant exists for a given KSN
-exports.checkForWarrant = (req, res) => {};
+exports.checkForWarrant = (req, res) => {
+    const ksn = req.body.ksn;
+    const permit_token = req.body.permit_token;
+
+    Permit.findOne({where: {permit_token}})
+    .catch(err => {
+        IRIS.critical("Permit.findOne failed",{ksn,permit_token,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(permit => {
+        if (permit === null) {
+            IRIS.info("permit not found perfectly",{ksn,permit_token},["api","success"]);
+            res.json({status:404, data:{errorCode:"permit_not_found"}});
+        }
+        else {
+            const permit_id = permit.permit_id;
+
+            Warrant.findOne({where: {ksn, permit_id}})
+            .catch(err => {
+                IRIS.critical("Warrant.findOne failed",{ksn,permit_token,err},["api","ise"]);
+                res.json({status:500, data:{errorCode:"internal_server_error"}});
+            })
+            .then(warrant => {
+                if (warrant === null) {
+                    IRIS.info("warrant not found perfectly",{ksn,permit_token},["api","success"]);
+                    res.json({status:202, data:{has_warrant: false}});
+                }
+                else {
+                    const warrant_id = warrant.warrant_id;
+
+                    IRIS.info("warrant was found perfectly",{warrant_id,ksn,permit_token},["api","success"]);
+                    res.json({status:202, data:{has_warrant: true, warrant}});
+                }
+            });
+        }
+    });
+};
 
 
 // returns only the warrants for the app calling this request

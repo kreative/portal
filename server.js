@@ -66,6 +66,7 @@ server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
 server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
 server.post('/api/permits', verifyKey, permits.createPermit);
 server.post('/api/warrants', verifyServiceKey, warrants.createWarrant);
+server.post('/api/warrants/check', verifyServiceKey, warrants.checkForWarrant);
 
 server.use(Sentry.Handlers.errorHandler());
 
