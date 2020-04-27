@@ -14,7 +14,7 @@ const Organization = DB.define('organization', {
     ksn: {
         type: Sequelize.BIGINT,
         references: {
-            mode: 'accounts',
+            model: 'account',
             key: 'ksn'
         }
     },
