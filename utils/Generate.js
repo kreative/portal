@@ -5,6 +5,7 @@ const Account = require("../models/AccountModel");
 const Organization = require("../models/OrganizationModel");
 const Permit = require("../models/PermitModel");
 const ServiceKey = require("../models/ServiceKeyModel");
+const Warrant = require("../models/WarrantModel");
 
 exports.acn = (callback) => {
     const newACN = parseInt(generate("1234567890", 16));
@@ -73,5 +74,15 @@ exports.skidn = (callback) => {
     .then(serviceKey => {
         if (serviceKey === null) callback(newSKIDN);
         else this.skidn();
+    });
+};
+
+exports.warrantID = (callback) => {
+    const newWarrantID = parseInt(generate("1234567890", 12));
+    
+    Warrant.findOne({where: {warrant_id: newWarrantID}})
+    .then(warrant => {
+        if (warrant === null) callback(newWarrantID);
+        else this.warrantID();
     });
 };

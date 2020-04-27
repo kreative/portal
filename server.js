@@ -21,8 +21,10 @@ const organizations = require("./controllers/OrganizationsController");
 const serviceKeys = require("./controllers/ServiceKeyController");
 const postage = require("./controllers/PostageController");
 const permits = require("./controllers/PermitsController");
+const warrants = require("./controllers/WarrantsController");
 
 const verifyKey = require("./middleware/VerifyKeyMiddleware");
+const verifyServiceKey = require("./middleware/VerifyServiceKey");
 const getIPMiddleware = require("./middleware/GetIP");
 const lookupIPInfoMiddleware = require("./middleware/LookupIPInfo");
 const validateRedirectData = require("./middleware/ValidateRedirectData");
@@ -43,12 +45,10 @@ server.get('/debug-sentry',(req, res) => {throw new Error('My first Sentry error
 server.get('/postage-test/:email', postage.emailTest);
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
 server.get('/404', (req, res) => res.render('404', {layout: '404Layout'}));
-
 server.get('/login', validateRedirectData, accounts.getLoginPage);
 server.get('/signup', validateRedirectData, accounts.getSignupPage);
 server.get('/resetpassword', validateRedirectData, accounts.getResetPasswordPage);
 server.get('/findusername', validateRedirectData, accounts.getFindUsernamePage);
-
 server.post('/api/check', accounts.checkIfCredExists);
 server.post('/api/convertemail', accounts.convertEmailToUsername);
 server.post('/api/accounts/signup', accounts.signup);
@@ -58,17 +58,14 @@ server.post('/api/accounts/verify', accounts.verifyKey);
 server.post('/api/accounts/resetcode', accounts.requestPasswordResetCode);
 server.post('/api/accounts/resetcode/verify', accounts.verifyResetCode);
 server.post('/api/accounts/resetpassword', accounts.resetPassword);
-
 server.post('/api/appchains', verifyKey, appchains.createAppchain);
 server.delete('/api/appchains', verifyKey, appchains.deleteAppchain);
-
 server.post('/api/organizations', verifyKey, organizations.createOrganization);
-
 server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
 server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
 server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
-
 server.post('/api/permits', verifyKey, permits.createPermit);
+server.post('/api/warrants', verifyServiceKey, warrants.createWarrant);
 
 server.use(Sentry.Handlers.errorHandler());
 

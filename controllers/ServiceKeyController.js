@@ -2,6 +2,7 @@ const nanoidGenerate = require('nanoid/generate');
 const jwt = require("jsonwebtoken");
 const ServiceKey = require("../models/ServiceKeyModel");
 const generate = require("../utils/Generate");
+const verifyServiceKey = require("../utils/VerifyServiceKey");
 const IRIS = require("../config/iris");
 
 const rawSecret = process.env.SERVICEKEY_SECURITY_CODE;
@@ -48,25 +49,16 @@ exports.verifyServiceKey = (req, res) => {
     const recieving_aidn = req.body.recieving_aidn;
     const calling_aidn = req.body.calling_aidn;
 
-    IRIS.info("verifyServiceKey started",{service_key,recieving_aidn,calling_aidn},["api"]);
+    IRIS.info("verifyServiceKey api method started",{service_key,recieving_aidn,calling_aidn},["api"]);
     
-    jwt.verify(service_key, SECRET, (err, payload) => {
-        if (err) {
-            IRIS.info("service key was invalid",{service_key},["api"]);
-            res.json({status:401, data:{errorCode:"invalid_service_key"}});
-        }
-        else if (payload.recieving_aidn !== recieving_aidn) {
-            IRIS.info("recieving_aidn mismatch",{service_key},["api"]);
-            res.json({status:401, data:{errorCode:"recieving_aidn_mismatch"}});
-        }
-        else if (payload.calling_aidn !== calling_aidn) {
-            IRIS.info("calling_aidn mismatch",{service_key},["api"]);
-            res.json({status:401, data:{errorCode:"calling_aidn_mismatch"}});
-        }
-        else {
-            IRIS.info("service key verification passed",{service_key},["api","success"]);
-            res.json({status:202, data:{statusCode:"verification_passed"}});
-        }
+    verifyServiceKey(service_key, recieving_aidn, calling_aidn)
+    .catch(errorCode => {
+        IRIS.info(errorCode,{service_key},["api"]);
+        res.json({status:401, data:{errorCode}});
+    })
+    .then(() => {
+        IRIS.info("service key verification passed",{service_key},["api","success"]);
+        res.json({status:202, data:{statusCode:"verification_passed"}});
     });
 };
 
