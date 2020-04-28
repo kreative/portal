@@ -3,7 +3,7 @@ const DB = require("../config/db").sequelize;
 
 const Permit = DB.define('permit', {
     permit_id: {
-        type: Sequelize.TEXT,
+        type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false
     },

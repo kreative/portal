@@ -64,7 +64,12 @@ server.post('/api/organizations', verifyKey, organizations.createOrganization);
 server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
 server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
 server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
+server.get('/api/permits/dev', verifyKey, permits.getPermitsForDev);
+server.get('/api/permits/app', verifyKey, permits.getPermitsForDev);
 server.post('/api/permits', verifyKey, permits.createPermit);
+server.put('/api/permits', verifyKey, permits.updatePermit);
+server.put('/api/permits/deactivate', verifyKey, permits.deactivatePermit);
+server.delete('/api/permits', verifyKey, permits.deletePermit);
 server.post('/api/warrants', verifyServiceKey, warrants.createWarrant);
 server.post('/api/warrants/check', verifyServiceKey, warrants.checkForWarrant);
 

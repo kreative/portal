@@ -173,6 +173,9 @@ exports.login = (req, res) => {
 };
 
 
+exports.updateAccount = (req, res) => {};
+
+
 exports.logout = (req, res) => {
     const ccn = res.locals.ccn;
 

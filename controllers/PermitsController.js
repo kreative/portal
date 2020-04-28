@@ -4,6 +4,9 @@ const IRIS = require("../config/iris");
 
 const scopes = ["organization","app"];
 
+// creating a permit is made in the Portal DevHub
+// and is not called by the application itself, that is why
+// it uses verifyKey not verifyServiceKey
 exports.createPermit = (req, res) => {
     const designated_app = req.body.designated_app;
     const permit_token = req.body.permit_token;
@@ -44,13 +47,95 @@ exports.createPermit = (req, res) => {
 };
 
 
-exports.getPermits = (req, res) => {};
+// this is used so that a developer can get permits
+// for their app in the Portal DevHub
+exports.getPermitsForApp = (req, res) => {
+    const designated_app = req.body.designated_app;
+
+    IRIS.info("getPermitsForApp started",{designated_app},["api"]);
+
+    Permit.findAll({where:{designated_app}})
+    .catch(err => {
+        IRIS.critical("Permit.findAll failed @ForApp",{designated_app,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(permits => {
+        IRIS.info("found permits perfectly",{designated_app},["api","success"]);
+        res.json({status:202, data:{permits}});
+    })
+};
 
 
-exports.updatePermit = (req, res) => {};
+// this is used so that a developer can get permits
+// that they own/issued
+exports.getPermitsForDev = (req, res) => {
+    const issuing_ksn = res.locals.ksn;
+
+    IRIS.info("getPermitsForDev started",{issuing_ksn},["api"]);
+
+    Permit.findAll({where:{issuing_ksn}})
+    .catch(err => {
+        IRIS.critical("Permit.findAll failed @ForDev",{issuing_ksn,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(permits => {
+        IRIS.info("found permits perfectly",{issuing_ksn},["api","success"]);
+        res.json({status:202, data:{permits}});
+    })
+};
 
 
-exports.deactivatePermit = (req, res) => {};
+// like the methods up adove, this is used by the Portal DevHub
+exports.updatePermit = (req, res) => {
+    const permit_id = req.body.permit_id;
+    const description = req.body.description;
+    const permit_token = req.body.permit_token;
+    const scope = req.body.scope;
+
+    IRIS.info("updatePermits started",{permit_id},["api"]);
+
+    Permit.update({description,permit_token,scope},{where:{permit_id}})
+    .catch(err => {
+        IRIS.critical("Permit.update failed",{permit_id,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(update => {
+        IRIS.info("permit updated perfectly",{permit_id},["api","success"]);
+        res.json({status:202, data:{update}});
+    })
+};
 
 
-exports.deletePermit = (req, res) => {};
+exports.deactivatePermit = (req, res) => {
+    const permit_id = req.body.permit_id;
+    const active = false;
+
+    IRIS.info("deactivatePermit started",{permit_id},["api"]);
+
+    Permit.update({active},{where:{permit_id}})
+    .catch(err => {
+        IRIS.critical("Permit.update failed @deactivatePermit",{permit_id,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(update => {
+        IRIS.info("permit deactivated perfectly",{permit_id},["api","success"]);
+        res.json({status:202, data:{update}});
+    });
+};
+
+
+exports.deletePermit = (req, res) => {
+    const permit_id = req.body.permit_id;
+
+    IRIS.info("deletePermit started",{permit_id},["api"]);
+
+    Permit.destroy({where:{permit_id}})
+    .catch(err => {
+        IRIS.critical("Permit.destroy failed",{permit_id,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(() => {
+        IRIS.info("permit deleted perfectly",{permit_id},["api","success"]);
+        res.json({status:202, data:{update}});
+    });
+};
