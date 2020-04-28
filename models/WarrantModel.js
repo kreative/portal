@@ -7,6 +7,10 @@ const Warrant = DB.define('warrant', {
         primaryKey: true,
         autoIncrement: false
     },
+    active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+    },
     permit_id: {
         type: Sequelize.BIGINT,
         allowNull: false,

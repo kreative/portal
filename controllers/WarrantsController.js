@@ -8,6 +8,7 @@ exports.createWarrant = (req, res) => {
     const ksn = req.body.ksn;
     const issuing_app = res.locals.calling_aidn;
     const permit_token = req.body.permit_token;
+    const active = true;
     const createdat = Date.now();
 
     IRIS.info("createWarrant started",{ksn,issuing_app,permit_token},["api"]);
@@ -28,6 +29,7 @@ exports.createWarrant = (req, res) => {
             generate.warrantID(warrant_id => {
                 Warrant.create({
                     warrant_id,
+                    active,
                     permit_id,
                     ksn,
                     issuing_app,
@@ -52,6 +54,7 @@ exports.createWarrant = (req, res) => {
 exports.checkForWarrant = (req, res) => {
     const ksn = req.body.ksn;
     const permit_token = req.body.permit_token;
+    const active = true;
 
     Permit.findOne({where: {permit_token}})
     .catch(err => {
@@ -66,7 +69,7 @@ exports.checkForWarrant = (req, res) => {
         else {
             const permit_id = permit.permit_id;
 
-            Warrant.findOne({where: {ksn, permit_id}})
+            Warrant.findOne({where: {ksn, permit_id, active}})
             .catch(err => {
                 IRIS.critical("Warrant.findOne failed",{ksn,permit_token,err},["api","ise"]);
                 res.json({status:500, data:{errorCode:"internal_server_error"}});
@@ -89,14 +92,60 @@ exports.checkForWarrant = (req, res) => {
 
 
 // returns only the warrants for the app calling this request
-exports.getWarrantsForAccount = (req, res) => {};
+// for a given KSN
+exports.getWarrantsForAccount = (req, res) => {
+    const ksn = req.body.ksn;
+    const issuing_app = res.locals.calling_aidn;
+
+    IRIS.info("getting warrant for account started",{ksn,issuing_app},["api"]);
+
+    Warrant.findAll({where:{ksn,issuing_app}})
+    .catch(err => {
+        IRIS.critical("Warrant.findAll failed",{ksn,issuing_app,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(warrants => {
+        IRIS.info("warrants were found perfectly",{ksn,issuing_app},["api","success"]);
+        res.json({status:202, data:{warrants}});
+    });
+};
 
 
 // can only be called by the admin of the appchain
-exports.getWarrantsForApp = (req, res) => {};
+// this method is used in the Portal DevHub to view warrants
+exports.getWarrantsForApp = (req, res) => {
+    const issuing_app = req.body.issuing_app;
+
+    IRIS.info("get warrants for app started",{issuing_app},["api"]);
+
+    Warrant.findAll({where:{issuing_app}})
+    .catch(err => {
+        IRIS.critical("Warrant.findAll failed @ForApp",{issuing_app,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(warrants => {
+        IRIS.info("warrants were found perfectly @ForApp",{issuing_app},["api","success"]);
+        res.json({status:202, data:{warrants}});
+    });
+};
 
 
-exports.updateWarrant = (req, res) => {};
+// we want to keep a track of all the warrants,
+// therefore they do not get removed from the DB
+// but instead deactivated
+exports.deactivateWarrant = (req, res) => {
+    const warrant_id = req.body.warrant_id;
+    const active = false;
 
+    IRIS.info("deactivate warrant started",{warrant_id},["api"]);
 
-exports.deleteWarrant = (req, res) => {};
+    Warrant.update({active},{where:{warrant_id}})
+    .catch(err => {
+        IRIS.critical("Warrant.update failed @deactivate",{warrant_id,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(update => {
+        IRIS.info("warrant was deactivated perfectly",{warrant_id},["api","success"]);
+        res.json({status:202, data:{deactivated:true}});
+    });
+};

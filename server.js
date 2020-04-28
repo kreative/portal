@@ -45,6 +45,7 @@ server.get('/debug-sentry',(req, res) => {throw new Error('My first Sentry error
 server.get('/postage-test/:email', postage.emailTest);
 server.get('/', (req, res) => res.render('home', {layout: 'homeLayout'}));
 server.get('/404', (req, res) => res.render('404', {layout: '404Layout'}));
+
 server.get('/login', validateRedirectData, accounts.getLoginPage);
 server.get('/signup', validateRedirectData, accounts.getSignupPage);
 server.get('/resetpassword', validateRedirectData, accounts.getResetPasswordPage);
@@ -70,8 +71,11 @@ server.post('/api/permits', verifyKey, permits.createPermit);
 server.put('/api/permits', verifyKey, permits.updatePermit);
 server.put('/api/permits/deactivate', verifyKey, permits.deactivatePermit);
 server.delete('/api/permits', verifyKey, permits.deletePermit);
+server.get('/api/warrants/account', verifyServiceKey, warrants.getWarrantsForAccount);
+server.get('/api/warrants/app', verifyServiceKey, warrants.getWarrantsForApp);
 server.post('/api/warrants', verifyServiceKey, warrants.createWarrant);
 server.post('/api/warrants/check', verifyServiceKey, warrants.checkForWarrant);
+server.put('/api/warrants/deactivate', verifyServiceKey, warrants.deactivateWarrant);
 
 server.use(Sentry.Handlers.errorHandler());
 
