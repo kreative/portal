@@ -5,7 +5,7 @@ body {
 }
 
 #body_404 {
-    background: url("../assets/shibu-cropped.gif") no-repeat center center fixed;
+    background: url("https://portal-assets.kaycdn.com/shibu-cropped.gif") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
