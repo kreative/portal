@@ -1,12 +1,13 @@
-require('dotenv').config();
-
-const path = require('path'); 
+const path = require('path');
+const dotenv = require("dotenv"); 
 const express = require('express');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const useragent = require("express-useragent");
 const helmet = require("helmet");
 const Sentry = require("@sentry/node");
+
+dotenv.config();
 
 Sentry.init({dsn:process.env.SENTRY_DSN});
 
