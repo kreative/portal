@@ -22,6 +22,7 @@
   "dependencies": {
     "@kaynet/iris-node-sdk": "^1.0.1",
     "@sentry/node": "^5.15.5",
+    "aws-sdk": "^2.666.0",
     "bcrypt": "^4.0.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
