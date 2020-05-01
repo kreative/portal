@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const password  = process.env.PGPASSWORD;
 const username  = process.env.PGUSERNAME;
 const port      = process.env.PGPORT;
