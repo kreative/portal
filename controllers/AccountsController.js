@@ -56,7 +56,7 @@ exports.verifyKey = (req, res) => {
 
         IRIS.info("failed to verify key",{status, errorCode},["api"]);
         res.json({status, data:{errorCode}});
-    })
+    });
 };
 
 

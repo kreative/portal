@@ -1,4 +1,4 @@
-const Postage = require("../services/postage");
+const Postage = require("../lib/postage/postage");
 const postage = new Postage();
 
 exports.sendWelcomeEmail = (fname, email) => {
