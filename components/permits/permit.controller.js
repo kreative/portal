@@ -1,6 +1,6 @@
-const Permit = require("../models/PermitModel");
-const generate = require("../utils/Generate");
-const IRIS = require("../config/iris");
+const Permit = require("./permit.model");
+const generate = require("../../utils/Generate");
+const IRIS = require("../../config/iris");
 
 const scopes = ["organization","app"];
 

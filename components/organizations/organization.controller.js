@@ -1,7 +1,7 @@
-const Organization = require("../models/OrganizationModel");
-const generate = require("../utils/Generate");
-const postage = require("../utils/PostageUtils");
-const IRIS = require("../config/iris");
+const Organization = require("./organization.model");
+const generate = require("../../utils/Generate");
+const postage = require("../../utils/PostageUtils");
+const IRIS = require("../../config/iris");
 
 exports.createOrganization = (req, res) => {
     const ksn = req.headers['portal_ksn'];

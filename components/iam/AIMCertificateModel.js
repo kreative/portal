@@ -1,24 +1,20 @@
 const Sequelize = require("sequelize");
-const DB = require("../config/db").sequelize;
+const DB = require("../../config/db").sequelize;
 
-const ServiceKey = DB.define('service_key', {
-    skidn: {
+const AIMCertificate = DB.define('aim_certificate', {
+    certificateID: {
         type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false
     },
-    service_key: {
+    access_token: {
         type: Sequelize.TEXT,
         allowNull: false,
         unique: true
     },
-    calling_aidn: {
+    identity_token: {
         type: Sequelize.BIGINT,
         allowNull: false,
-        references: {
-            model: 'appchain',
-            key: 'aidn',
-        }
     },
     recieving_aidn: {
         type: Sequelize.BIGINT,
@@ -44,4 +40,4 @@ const ServiceKey = DB.define('service_key', {
     timestamps: false
 });
 
-module.exports = ServiceKey;
+module.exports = AIMCertificate;

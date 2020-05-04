@@ -1,4 +1,4 @@
-const Keychain = require('../models/KeychainModel');
+const Keychain = require('../components/accounts/keychain.model');
 const jwt = require('jsonwebtoken');
 const IRIS = require("../config/iris");
 

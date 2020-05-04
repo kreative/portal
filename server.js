@@ -16,13 +16,13 @@ const IRIS = require("./config/iris");
 const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
-const accounts = require("./controllers/AccountsController");
-const appchains = require("./controllers/AppchainsController");
-const organizations = require("./controllers/OrganizationsController");
-const serviceKeys = require("./controllers/ServiceKeyController");
-const postage = require("./controllers/PostageController");
-const permits = require("./controllers/PermitsController");
-const warrants = require("./controllers/WarrantsController");
+const accounts = require("./components/accounts/account.controller");
+const appchains = require("./components/appchains/appchain.controller");
+const organizations = require("./components/organizations/organization.controller");
+const serviceKeys = require("./components/iam/ServiceKeyController");
+const postage = require("./lib/postage/PostageController");
+const permits = require("./components/permits/permit.controller");
+const warrants = require("./components/warrants/warrant.controller");
 
 const verifyKey = require("./middleware/VerifyKeyMiddleware");
 const verifyServiceKey = require("./middleware/VerifyServiceKey");

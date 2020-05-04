@@ -1,14 +1,14 @@
 const bcrypt = require("bcryptjs");
-const Account = require("../models/AccountModel");
-const Keychain = require("../models/KeychainModel");
-const ResetCode = require("../models/ResetCodeModel");
-const generate = require("../utils/Generate");
-const convertUsernameToKSN = require("../utils/ConvertUsernameToKsn");
-const createKeychain = require("../utils/CreateKeychain");
-const createResetCode = require("../utils/CreateResetCode");
-const postage = require("../utils/PostageUtils");
-const verifyKey = require("../utils/VerifyKey");
-const IRIS = require("../config/iris");
+const Account = require("./account.model");
+const Keychain = require("./keychain.model");
+const ResetCode = require("./resetcode.model");
+const generate = require("../../utils/Generate");
+const convertUsernameToKSN = require("../../utils/ConvertUsernameToKsn");
+const createKeychain = require("../../utils/CreateKeychain");
+const createResetCode = require("../../utils/CreateResetCode");
+const postage = require("../../utils/PostageUtils");
+const verifyKey = require("../../utils/VerifyKey");
+const IRIS = require("../../config/iris");
 
 
 exports.getLoginPage = (req, res) => {

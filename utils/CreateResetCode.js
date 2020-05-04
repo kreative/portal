@@ -1,4 +1,4 @@
-const ResetCode = require("../models/ResetCodeModel");
+const ResetCode = require("../components/accounts/resetcode.model");
 const generate = require('nanoid/generate');
 
 const generateCode = (callback) => {

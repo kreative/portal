@@ -1,4 +1,4 @@
-const Account = require("../models/AccountModel");
+const Account = require("../components/accounts/account.model");
 
 const convertUsernameToKSN = (username) => {
     return new Promise((resolve, reject) => {

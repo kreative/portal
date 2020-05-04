@@ -1,9 +1,9 @@
 const nanoidGenerate = require('nanoid/generate');
 const jwt = require("jsonwebtoken");
-const ServiceKey = require("../models/ServiceKeyModel");
-const generate = require("../utils/Generate");
-const verifyServiceKey = require("../utils/VerifyServiceKey");
-const IRIS = require("../config/iris");
+const ServiceKey = require("./AIMCertificateModel");
+const generate = require("../../utils/Generate");
+const verifyServiceKey = require("../../utils/VerifyServiceKey");
+const IRIS = require("../../config/iris");
 
 const rawSecret = process.env.SERVICEKEY_SECURITY_CODE;
 const SECRET = Buffer.from(rawSecret, 'base64');

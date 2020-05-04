@@ -1,11 +1,11 @@
 const generate = require('nanoid/generate');
-const Appchain = require("../models/AppchainModel");
-const Keychain = require("../models/KeychainModel");
-const Account = require("../models/AccountModel");
-const Organization = require("../models/OrganizationModel");
-const Permit = require("../models/PermitModel");
-const ServiceKey = require("../models/ServiceKeyModel");
-const Warrant = require("../models/WarrantModel");
+const Appchain = require("../components/appchains/appchain.model");
+const Keychain = require("../components/accounts/keychain.model");
+const Account = require("../components/accounts/account.model");
+const Organization = require("../components/organizations/organization.model");
+const Permit = require("../components/permits/permit.model");
+const ServiceKey = require("../components/iam/AIMCertificateModel");
+const Warrant = require("../components/warrants/warrant.model");
 
 exports.acn = (callback) => {
     const newACN = parseInt(generate("1234567890", 16));

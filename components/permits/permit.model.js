@@ -1,9 +1,9 @@
 const Sequelize = require("sequelize");
-const DB = require("../config/db").sequelize;
+const DB = require("../../config/db").sequelize;
 
-const Warrant = DB.define('warrant', {
-    warrant_id: {
-        type: Sequelize.TEXT,
+const Permit = DB.define('permit', {
+    permit_id: {
+        type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false
     },
@@ -11,28 +11,33 @@ const Warrant = DB.define('warrant', {
         type: Sequelize.BOOLEAN,
         allowNull: false
     },
-    permit_id: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
-        references: {
-            model: 'permit',
-            key: 'permit_id'
-        }
-    },
-    ksn: {
-        type: Sequelize.BIGINT,
-        allowNull: false,
-        references: {
-            model: 'account',
-            key: 'ksn',
-        }
-    },
-    issuing_app: {
+    designated_app: {
         type: Sequelize.BIGINT,
         allowNull: false,
         references: {
             model: 'appchain',
             key: 'aidn'
+        }
+    },
+    permit_token: {
+        type: Sequelize.TEXT,
+        unique: true,
+        allowNull: false
+    },
+    description: {
+        type: Sequelize.TEXT,
+        allowNull: true
+    },
+    scope: {
+        type: Sequelize.TEXT,
+        allowNull: false
+    },
+    issuing_ksn: {
+        type: Sequelize.BIGINT,
+        allowNull: false,
+        references: {
+            model: 'account',
+            key: 'ksn',
         }
     },
     createdat: {
@@ -43,4 +48,4 @@ const Warrant = DB.define('warrant', {
     timestamps: false
 });
 
-module.exports = Warrant;
+module.exports = Permit;

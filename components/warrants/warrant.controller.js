@@ -1,7 +1,7 @@
-const Warrant = require("../models/WarrantModel");
-const Permit = require("../models/PermitModel");
-const generate = require("../utils/Generate");
-const IRIS = require("../config/iris");
+const Warrant = require("./warrant.model");
+const Permit = require("../permits/permit.model");
+const generate = require("../../utils/Generate");
+const IRIS = require("../../config/iris");
 
 
 exports.createWarrant = (req, res) => {

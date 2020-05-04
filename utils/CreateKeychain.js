@@ -1,7 +1,7 @@
 const nanoidGenerate = require('nanoid/generate');
 const jwt = require("jsonwebtoken");
 const generate = require("../utils/Generate");
-const Keychain = require("../models/KeychainModel");
+const Keychain = require("../components/accounts/keychain.model");
 
 const rawSecret = process.env.KEYCHAIN_SECURITY_CODE;
 const SECRET = Buffer.from(rawSecret, 'base64');

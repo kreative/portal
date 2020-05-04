@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const DB = require("../config/db").sequelize;
+const DB = require("../../config/db").sequelize;
 
 const Account = DB.define('account', {
     ksn: {

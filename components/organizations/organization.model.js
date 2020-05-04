@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const DB = require("../config/db").sequelize;
+const DB = require("../../config/db").sequelize;
 
 // there should be a foreign key constraint in this model
 // but I forgot to put it in, and it still works

@@ -1,8 +1,8 @@
-const Appchain = require("../models/AppchainModel");
-const Organization = require("../models/OrganizationModel");
-const generate = require("../utils/Generate");
-const postage = require("../utils/PostageUtils");
-const IRIS = require("../config/iris");
+const Appchain = require("./appchain.model");
+const Organization = require("../organizations/organization.model");
+const generate = require("../../utils/Generate");
+const postage = require("../../utils/PostageUtils");
+const IRIS = require("../../config/iris");
 
 exports.createAppchain = (req, res) => {
     const name = req.body.name;
