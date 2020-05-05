@@ -25,7 +25,6 @@ const permitRoutes = require("./components/permits/routes");
 const warrantRoutes = require("./components/warrants/routes");
 const aimRoutes = require("./components/aim/routes");
 
-const verifyKey = require("./middleware/VerifyKeyMiddleware");
 const getIPMiddleware = require("./middleware/GetIP");
 const lookupIPInfoMiddleware = require("./middleware/LookupIPInfo");
 

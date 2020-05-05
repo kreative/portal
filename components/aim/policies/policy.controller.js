@@ -4,18 +4,14 @@ const IRIS = require("../../../config/iris");
 exports.createPolicy = (req, res) => {
     const policy = req.body.policy;
     const description = req.body.description;
-    const associated_appchain = req.body.associate_appchain;
+    const associated_appchain = req.body.associated_appchain;
     const createdat = Date.now();
 
     IRIS.info("createPolicy started",{policy},["api"]);
 
     Policy.findOne({where:{policy}})
     .then(_policy => {
-        if (_policy !== null) {
-            IRIS.warn("policy already existed",{policy},["api"]);
-            res.json({status:401, data:{errorCode:"policy_already_exists"}});
-        }
-        else {
+        if (_policy === null) {
             Policy.create({
                 policy,
                 description,
@@ -30,6 +26,10 @@ exports.createPolicy = (req, res) => {
                 IRIS.info("policy created perfectly",{policy},["api","success"]);
                 res.json({status:200, data:{policy}})
             });
+        }
+        else {
+            IRIS.warn("policy already existed",{policy},["api"]);
+            res.json({status:401, data:{errorCode:"policy_already_exists"}});
         }
     });
 };

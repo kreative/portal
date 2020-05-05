@@ -6,7 +6,7 @@ const Policy = DB.define('policy', {
         type: Sequelize.STRING(32),
         primaryKey: true,
     },
-    associate_appchain: {
+    associated_appchain: {
         type: Sequelize.BIGINT,
         allowNull: false,
         references: {

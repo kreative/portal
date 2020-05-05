@@ -35,7 +35,7 @@ exports.createCertificate = (req, res) => {
                         res.json({status:500, data:{errorCode:"internal_server_error"}});
                     })
                     .then(certificate => {
-                        IRIS.info("certificate created perfectly",{skidn},["api","success"]);
+                        IRIS.info("certificate created perfectly",{certificate_id},["api","success"]);
                         res.json({status:200, data:{certificate}});
                     });
                 });
@@ -55,7 +55,7 @@ exports.verifyCertificate = (req, res) => {
 
     IRIS.info("verifyCertificate api method started",{identity_token},["api"]);
 
-    verifyAIMCertificate(identity_token, access_token, policy)
+    verifyAIMCertificate(access_token, identity_token, policy)
     .catch(errorCode => {
         IRIS.info(errorCode,{identity_token},["api"]);
         res.json({status:401, data:{errorCode}});
