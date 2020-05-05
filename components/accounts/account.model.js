@@ -36,6 +36,9 @@ const Account = DB.define('account', {
         type: Sequelize.TEXT,
         allowNull: false
     },
+    email_verified: {
+        type: Sequelize.BOOLEAN,
+    },
     createdat: Sequelize.BIGINT
 }, {
     timestamps: false

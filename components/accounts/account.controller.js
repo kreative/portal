@@ -6,8 +6,9 @@ const generate = require("../../utils/Generate");
 const convertUsernameToKSN = require("../../utils/ConvertUsernameToKsn");
 const createKeychain = require("../../utils/CreateKeychain");
 const createResetCode = require("../../utils/CreateResetCode");
-const postage = require("../../utils/PostageUtils");
+const postage = require("../../lib/postage/postage.utils");
 const verifyKey = require("../../utils/VerifyKey");
+const ev = require("../../utils/EmailVerificationKit");
 const IRIS = require("../../config/iris");
 
 
@@ -33,6 +34,11 @@ exports.getFindUsernamePage = (req, res) => {
     IRIS.info("user routed to find username page",{url: req.originalUrl},["ui"]);
     res.render('findUsername', {appName: res.locals.appName});
 };
+
+exports.getVerifyEmailPage = (req, res) => {
+    IRIS.info("user routed to verify email page",{url: req.originalUrl},["ui"]);
+    res.render('verifyEmail');
+}
 
 
 // method for external applications to verify a key
@@ -68,6 +74,7 @@ exports.signup = (req, res) => {
     const phone_number = req.body.phone_number;
     const phone_country_code = req.body.phone_country_code;
     const password = req.body.password;
+    const email_verified = false;
     const createdat = Date.now();
     const aidn = req.body.AIDN;
     const salt = bcrypt.genSaltSync(12);
@@ -85,6 +92,7 @@ exports.signup = (req, res) => {
             phone_number,
             phone_country_code,
             bpassword,
+            email_verified,
             createdat
         })
         .catch(err => {
@@ -107,9 +115,10 @@ exports.signup = (req, res) => {
             .then(key => {
                 try {
                     postage.sendWelcomeEmail(account.fname, account.email);
+                    ev.createUrl(account.ksn, (url) => postage.sendEmailVerificationEmail(account.email, url));
                 }
                 catch (err) {
-                    IRIS.error("sending welcome email failed", {err}, ["api","catch","ise"]);
+                    IRIS.error("sending emails in signup failed", {err}, ["api","catch","ise"]);
                 }
                 finally {
                     IRIS.info("account created",{ksn:account.ksn},["api","success"]);
@@ -121,7 +130,30 @@ exports.signup = (req, res) => {
 };
 
 
-exports.verifyEmail = (req, res) => {};
+exports.verifyEmail = (req, res) => {
+    const token = req.body.token;
+
+    IRIS.info("verifyEmail method started",{token},["api"]);
+
+    ev.verifyToken(token)
+    .catch(err => {
+        IRIS.info("token for ev invalid",{err},["api","catch"]);
+        res.json({status:401, data:{errorCode:"invalid_token"}});
+    })
+    .then((ksn) => {
+        IRIS.info("token for ev passed",{token},["api"]);
+
+        Account.update({verified_email:true}, {where:{ksn}})
+        .catch(err => {
+            IRIS.critical("Account.update for ev failed",{err,ksn},["api","ise"]);
+            res.json({status:500, data:{errorCode:"internal_server_error"}});
+        })
+        .then(update => {
+            IRIS.info("account update for ev passed",{ksn,update},["api","success"]);
+            res.json({status:202});
+        });
+    });
+};
 
 
 exports.login = (req, res) => {

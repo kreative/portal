@@ -111,8 +111,8 @@ $("#email").keyup(function(){
         var email = $("#email").val();
 
         if (email !== "") {
-            if (validateEmail(email) === true) {
-                $.get("/api/check", {type:"email",cred:email}, function(data, status){
+            if (validateEmail(email)) {
+                $.post("/api/check", {type:"email",cred:email}, function(data, status){
                     if (data.data.exists === true) {
                         emailWorks = false;
                         displayAlert("Email already in use", "#email")
