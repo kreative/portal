@@ -16,7 +16,6 @@ const IRIS = require("./config/iris");
 const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
-const serviceKeys = require("./components/aim/certificates/certificate.controller");
 const postage = require("./lib/postage/PostageController");
 
 const accountRoutes = require("./components/accounts/routes");
@@ -24,6 +23,7 @@ const appchainRoutes = require("./components/appchains/routes");
 const organizationRoutes = require("./components/organizations/routes");
 const permitRoutes = require("./components/permits/routes");
 const warrantRoutes = require("./components/warrants/routes");
+const aimRoutes = require("./components/aim/routes");
 
 const verifyKey = require("./middleware/VerifyKeyMiddleware");
 const getIPMiddleware = require("./middleware/GetIP");
@@ -51,10 +51,7 @@ server.use(appchainRoutes);
 server.use(organizationRoutes);
 server.use(permitRoutes);
 server.use(warrantRoutes);
-
-server.post('/api/service_keys', verifyKey, serviceKeys.createServiceKey);
-server.post('/api/service_keys/verify', serviceKeys.verifyServiceKey);
-server.delete('/api/service_keys', verifyKey, serviceKeys.deleteServiceKey);
+server.use(aimRoutes);
 
 server.use(Sentry.Handlers.errorHandler());
 

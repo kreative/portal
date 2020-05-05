@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const DB = require("../../../config/db").sequelize;
 
 const Certificate = DB.define('certificate', {
-    certificateID: {
+    certificate_id: {
         type: Sequelize.BIGINT,
         primaryKey: true,
         autoIncrement: false

@@ -3,7 +3,7 @@ const DB = require("../../../config/db").sequelize;
 
 const Policy = DB.define('policy', {
     policy: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING(32),
         primaryKey: true,
     },
     associate_appchain: {
