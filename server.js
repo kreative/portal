@@ -16,7 +16,7 @@ const IRIS = require("./config/iris");
 const PORT = process.env.PORT || 3000;
 const DB = require("./config/db").sequelize;
 
-const serviceKeys = require("./components/iam/ServiceKeyController");
+const serviceKeys = require("./components/aim/certificates/certificate.controller");
 const postage = require("./lib/postage/PostageController");
 
 const accountRoutes = require("./components/accounts/routes");

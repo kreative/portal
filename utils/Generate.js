@@ -4,7 +4,7 @@ const Keychain = require("../components/accounts/keychain.model");
 const Account = require("../components/accounts/account.model");
 const Organization = require("../components/organizations/organization.model");
 const Permit = require("../components/permits/permit.model");
-const ServiceKey = require("../components/iam/AIMCertificateModel");
+const Certificate = require("../components/aim/certificates/certificate.model");
 const Warrant = require("../components/warrants/warrant.model");
 
 exports.acn = (callback) => {
@@ -67,14 +67,34 @@ exports.permitID = (callback) => {
     });
 };
 
-exports.skidn = (callback) => {
-    const newSKIDN = parseInt(generate("1234567890", 16));
-    
-    ServiceKey.findOne({where: {skidn: newSKIDN}})
-    .then(serviceKey => {
-        if (serviceKey === null) callback(newSKIDN);
-        else this.skidn();
+exports.certificateID = (callback) => {
+    const newID = parseInt(generate("1234567890", 16));
+
+    Certificate.findOne({where: {certificate_id: newID}})
+    .then(certificate => {
+        if (certificate === null) callback(newID);
+        else this.certificateID();
     });
+};
+
+exports.identityToken = (callback) => {
+    const newToken = generate("abcdefghijklmnopqrstuvwxyz1234567890", 32);
+
+    Certificate.findOne({where: {identity_token: newToken}})
+    .then(certificate => {
+        if (certificate === null) callback(newToken);
+        else this.identityToken();
+    })
+};
+
+exports.accessToken = (callback) => {
+    const newToken = generate("abcdefghijklmnopqrstuvwxyz1234567890", 32);
+
+    Certificate.findOne({where: {access_token: newToken}})
+    .then(certificate => {
+        if (certificate === null) callback(newToken);
+        else this.accessToken();
+    })
 };
 
 exports.warrantID = (callback) => {

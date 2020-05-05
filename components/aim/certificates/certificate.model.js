@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
-const DB = require("../../config/db").sequelize;
+const DB = require("../../../config/db").sequelize;
 
-const AIMCertificate = DB.define('aim_certificate', {
+const Certificate = DB.define('certificate', {
     certificateID: {
         type: Sequelize.BIGINT,
         primaryKey: true,
@@ -16,13 +16,9 @@ const AIMCertificate = DB.define('aim_certificate', {
         type: Sequelize.BIGINT,
         allowNull: false,
     },
-    recieving_aidn: {
-        type: Sequelize.BIGINT,
+    policies: {
+        type: Sequelize.ARRAY(Sequelize.TEXT),
         allowNull: false,
-        references: {
-            model: 'appchain',
-            key: 'aidn',
-        }
     },
     name: {
         type: Sequelize.TEXT,
@@ -40,4 +36,4 @@ const AIMCertificate = DB.define('aim_certificate', {
     timestamps: false
 });
 
-module.exports = AIMCertificate;
+module.exports = Certificate;

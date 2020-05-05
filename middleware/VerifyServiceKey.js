@@ -1,4 +1,4 @@
-const verifyServiceKeyUtil = require("../utils/VerifyServiceKey");
+const verifyServiceKeyUtil = require("../utils/VerifyAIMCertificate");
 const IRIS = require("../config/iris");
 
 const verifyServiceKey = (req, res, next) => {
