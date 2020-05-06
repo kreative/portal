@@ -243,3 +243,53 @@ button:hover {
     margin-bottom: 15px;
     height: 45px;
 }
+
+@media (min-width: 0px) {
+    .action-box {
+        width: 90%;
+        padding: 30px 0;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+    }
+}
+
+@media (min-width: 576px) {
+    .action-box {
+        width: 70%;
+        padding: 50px;
+        -webkit-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        -moz-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+    }
+}
+
+@media (min-width: 768px) {
+    .action-box {
+        width: 50%;
+        padding: 50px;
+        -webkit-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        -moz-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+    }
+}
+
+@media (min-width: 992px) {
+    .action-box {
+        width: 40%;
+        padding: 50px;
+        -webkit-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        -moz-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+    }
+}
+
+@media (min-width: 1200px) {
+    .action-box {
+        width: 25%;
+        padding: 50px;
+        -webkit-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        -moz-box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+        box-shadow: 0px 0px 29px 3px rgba(235,235,235,1);
+    }
+}
