@@ -19,6 +19,17 @@ window.onload = function() {
     $("#email").val("");
 };
 
+function unhidePassword() {
+    var x = document.getElementById("show-password-checkbox");
+
+    if (x.type === "password") {
+        x.type = "text";
+    }
+    else {
+        x.type = "password";
+    }
+}
+
 function executeSignup() {
     var username = $("#username").val();
     var password = $("#password").val();

@@ -115,7 +115,9 @@ exports.signup = (req, res) => {
             .then(key => {
                 try {
                     postage.sendWelcomeEmail(account.fname, account.email);
-                    ev.createUrl(account.ksn, (url) => postage.sendEmailVerificationEmail(account.email, url));
+                    ev.createUrl(account.ksn, (url) => {
+                        postage.sendEmailVerificationEmail(account.email, url);
+                    });
                 }
                 catch (err) {
                     IRIS.error("sending emails in signup failed", {err}, ["api","catch","ise"]);
@@ -205,7 +207,52 @@ exports.login = (req, res) => {
 };
 
 
-exports.updateAccount = (req, res) => {};
+exports.updateAccount = (req, res) => {
+    const ksn = req.body.ksn;
+    const fname = req.body.fname;
+    const lname = req.body.lname;
+    const username = req.body.username;
+
+    IRIS.info("updateAccount started",{ksn},["api"]);
+
+    Account.update({fname,lname,username}, {where:ksn})
+    .catch(err => {
+         IRIS.critical("updateAccount failed",{ksn,err},["api","ise"]);
+         res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(update => {
+        IRIS.info("updateAccount passed",{ksn,update},["api","success"]);
+        res.json({status:200});
+    });
+};
+
+
+exports.updateAccountEmail = (req, res) => {
+    const ksn = req.body.ksn;
+    const email = req.body.email;
+    const email_verified = false;
+
+    IRIS.info("updateAccountEmail started",{ksn,email},["api"]);
+
+    Account.update({email,email_verified}, {where:{ksn}})
+    .catch(err => {
+        IRIS.critical("updateAccountEmail failed",{ksn,err},["api","ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    })
+    .then(update => {
+        try {
+            ev.createUrl(account.ksn, (url) => {
+                postage.sendEmailVerificationEmail(account.email, url);
+            });
+        }
+        catch (err) {
+            IRIS.critical("sending verification email failed",{ksn,err},["api","catch"])
+        }
+        finally {
+            res.json({status:202});
+        }
+    })
+};
 
 
 exports.logout = (req, res) => {

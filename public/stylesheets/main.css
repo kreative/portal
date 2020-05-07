@@ -14,7 +14,7 @@ body {
 
 h1 {
     font-family: 'RadioGrotesk-Regular', sans-serif;
-    font-size: 1.7em;
+    font-size: 2em;
 }
 
 .gigantic {
@@ -146,6 +146,19 @@ button:hover {
     height: 6px;
 }
 
+#customer-support-link {
+    text-align: center;
+    font-size: 0.9em;
+    color: #5d5d5d !important;
+    text-decoration: none;
+    padding-top: 15px;
+    cursor: pointer;
+}
+
+#customer-support-link:hover {
+    text-decoration: underline;
+}
+
 .hidden {
     display: none;
 }
@@ -239,7 +252,6 @@ button:hover {
 }
 
 #kreativelogo {
-    fill: black;
     margin-bottom: 15px;
     height: 45px;
 }

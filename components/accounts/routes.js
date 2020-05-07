@@ -20,5 +20,7 @@ router.post('/api/accounts/resetcode', accounts.requestPasswordResetCode);
 router.post('/api/accounts/resetcode/verify', accounts.verifyResetCode);
 router.post('/api/accounts/resetpassword', accounts.resetPassword);
 router.post('/api/accounts/verifyemail', accounts.verifyEmail);
+router.put('/api/accounts', verifyKey, accounts.updateAccount);
+router.put('/api/accounts/email', verifyKey,accounts.updateAccountEmail);
 
 module.exports = router;
