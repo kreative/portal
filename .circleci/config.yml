@@ -18,7 +18,7 @@ jobs:
       - checkout
       - run:
           name: Add dokku remote
-          command: git remote add dokku dokku@64.225.14.46:portal-server
+          command: git remote add dokku ssh://git@64.225.14.46:portal-server
       - run:
           name: Push to dokku
           command: git push dokku master
