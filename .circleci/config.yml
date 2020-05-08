@@ -19,6 +19,8 @@ jobs:
       - run: |
           rm -rf .git
           git init
+          git config user.email "armaan@kreative.im"
+          git config user.name "Armaan Gupta"
           git add .
           git commit -m "init from circle-ci"
       - run:
