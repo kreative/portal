@@ -13,7 +13,7 @@ jobs:
             - run: npm test
   deploy-to-dokku:
     docker:
-      image: alpine
+      - image: alpine
     steps:
       - checkout
       - run:
