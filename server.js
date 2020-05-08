@@ -55,5 +55,5 @@ server.use(aimRoutes);
 server.use(Sentry.Handlers.errorHandler());
 
 DB.authenticate()
-.then(() => server.listen(PORT, console.log(`portal online::::${PORT}`)))
+.then(() => server.listen(PORT, IRIS.info(`portal online::::${PORT}`,{},[])))
 .catch(err => IRIS.error("Portal DB failed to connect", err, ["database"]));
