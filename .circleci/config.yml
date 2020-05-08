@@ -12,11 +12,10 @@ jobs:
             - run: npm install
             - run: npm test
   deploy-to-dokku:
+    docker:
+      image: alpine
     steps:
       - checkout
-      - run:
-          name: Add dokku to git remote
-          command: git remote add dokku dokku@dokku.kreativekws.com:portal-server
       - run:
           name: Push to dokku
           command: git push dokku master
