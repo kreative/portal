@@ -15,17 +15,9 @@ jobs:
     docker:
       - image: circleci/node:latest
     steps:
-      - checkout
-      - run: |
-          rm -rf .git
-          git init
-          git config user.email "armaan@kreative.im"
-          git config user.name "Armaan Gupta"
-          git add .
-          git commit -m "init from circle-ci"
       - run:
           name: Add dokku remote
-          command: git remote add dokku ssh://dokku@64.225.14.46:portal-server
+          command: git remote add dokku dokku@dokku.kreativekws.com:portal-server
       - run:
           name: Push to dokku
           command: git push dokku master
