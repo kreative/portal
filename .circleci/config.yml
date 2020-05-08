@@ -16,6 +16,11 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
+      - run: |
+          rm -rf .git
+          git init
+          git add .
+          git commit -m "init from circle-ci"
       - run:
           name: Add dokku remote
           command: git remote add dokku ssh://dokku@64.225.14.46:portal-server
