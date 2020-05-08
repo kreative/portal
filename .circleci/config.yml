@@ -17,6 +17,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Add dokku remote
+          command: git remote add dokku dokku@dokku.kreativekws.com:portal-server
+      - run:
           name: Push to dokku
           command: git push dokku master
 workflows:
