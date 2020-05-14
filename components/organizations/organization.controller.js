@@ -39,7 +39,16 @@ exports.createOrganization = (req, res) => {
 };
 
 // returns list of organizations belonging to a KSN
-exports.getOrganizations = (req, res) => {}
+// but for now it just returns all the organizations
+exports.getOrganizations = (req, res) => {
+    Organization.findAll().then(organizations => {
+        res.json({status:202, data:{organizations}});
+    })
+    .catch(error => {
+        IRIS.critical("getOrganizations failed", {error}, ["api", "ise"]);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    });
+};
 
 
 exports.updateOrganization = (req, res) => {};
