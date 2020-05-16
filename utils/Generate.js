@@ -8,7 +8,7 @@ const Certificate = require("../components/aim/certificates/certificate.model");
 const Warrant = require("../components/warrants/warrant.model");
 
 exports.acn = (callback) => {
-    const newACN = parseInt(generate("1234567890", 16));
+    const newACN = parseInt(generate("123456789", 1) + generate("1234567890", 15));
     
     Appchain.findOne({where: {acn: newACN}})
     .then(appchain => {
@@ -18,7 +18,7 @@ exports.acn = (callback) => {
 };
 
 exports.aidn = (callback) => {
-    const newAIDN = parseInt(generate("1234567890", 16));
+    const newAIDN = parseInt(generate("123456789", 1) + generate("1234567890", 15));
     
     Appchain.findOne({where: {aidn: newAIDN}})
     .then(appchain => {
@@ -28,7 +28,7 @@ exports.aidn = (callback) => {
 };
 
 exports.ccn = (callback) => {
-    const newCCN = parseInt(generate("1234567890", 12));
+    const newCCN = parseInt(generate("123456789", 1) + generate("1234567890", 11));
     
     Keychain.findOne({where: {ccn: newCCN}})
     .then(keychain => {
@@ -38,7 +38,7 @@ exports.ccn = (callback) => {
 };
 
 exports.ksn = (callback) => {
-    const newKSN = parseInt(generate("1234567890", 12));
+    const newKSN = parseInt(generate("123456789", 1) + generate("1234567890", 11));
     
     Account.findOne({where: {ksn: newKSN}})
     .then(account => {
@@ -48,7 +48,7 @@ exports.ksn = (callback) => {
 };
 
 exports.oidn = (callback) => {
-    const newOIDN = parseInt(generate("1234567890", 16));
+    const newOIDN = parseInt(generate("123456789", 1) + generate("1234567890", 15));
     
     Organization.findOne({where: {oidn: newOIDN}})
     .then(organization => {
@@ -58,7 +58,7 @@ exports.oidn = (callback) => {
 };
 
 exports.permitID = (callback) => {
-    const newPermitID = parseInt(generate("1234567890", 12));
+    const newPermitID = parseInt(generate("123456789", 1) + generate("1234567890", 11));
 
     Permit.findOne({where: {permit_id: newPermitID}})
     .then(permit => {
@@ -68,7 +68,7 @@ exports.permitID = (callback) => {
 };
 
 exports.certificateID = (callback) => {
-    const newID = parseInt(generate("1234567890", 16));
+    const newID = parseInt(generate("123456789", 1) + generate("1234567890", 15));
 
     Certificate.findOne({where: {certificate_id: newID}})
     .then(certificate => {
@@ -98,7 +98,7 @@ exports.accessToken = (callback) => {
 };
 
 exports.warrantID = (callback) => {
-    const newWarrantID = parseInt(generate("1234567890", 12));
+    const newWarrantID = parseInt(generate("123456789", 1) + generate("1234567890", 11));
     
     Warrant.findOne({where: {warrant_id: newWarrantID}})
     .then(warrant => {
