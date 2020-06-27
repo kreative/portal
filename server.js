@@ -6,6 +6,7 @@ const exphbs = require('express-handlebars');
 const useragent = require("express-useragent");
 const helmet = require("helmet");
 const Sentry = require("@sentry/node");
+const cors = require("cors");
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ const aimRoutes = require("./components/aim/routes");
 const getIPMiddleware = require("./middleware/GetIP");
 const lookupIPInfoMiddleware = require("./middleware/LookupIPInfo");
 
+server.use(cors());
 server.use(Sentry.Handlers.requestHandler());
 server.use(helmet());
 server.use(bodyParser.json());
