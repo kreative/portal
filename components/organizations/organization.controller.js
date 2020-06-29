@@ -1,15 +1,11 @@
 const Organization = require("./organization.model");
 const generate = require("../../utils/Generate");
-const postage = require("../../lib/postage/postage.utils");
-const IRIS = require("../../config/iris");
 
 exports.createOrganization = (req, res) => {
   const ksn = req.headers["portal_ksn"] || 605249861408;
   const name = req.body.name;
   const admin_email = req.body.admin_email;
   const createdat = Date.now();
-
-  IRIS.info("creating organization started", { ksn, admin_email }, ["api"]);
 
   generate.oidn((oidn) => {
     Organization.create({
@@ -19,29 +15,10 @@ exports.createOrganization = (req, res) => {
       admin_email,
       createdat,
     })
+      .then((org) => res.json({ status: 202, data: org }))
       .catch((err) => {
-        IRIS.critical("Organization.create failed", { ksn, admin_email }, [
-          "api",
-          "ise",
-        ]);
-        res.json({ status: 500, data: err });
-      })
-      .then((org) => {
-        try {
-          postage.sendNewOrganizationCreatedEmail(admin_email, name);
-        } catch (err) {
-          IRIS.error(
-            "sendNewOrganizationCreatedEmail failed",
-            { admin_email, oidn },
-            ["api", "catch"]
-          );
-        } finally {
-          IRIS.info("organization created perfectly", { oidn }, [
-            "api",
-            "success",
-          ]);
-          res.json({ status: 202, data: org });
-        }
+          console.log(err);
+          res.json({ status: 500, data: { errorCode: "ISE" } })
       });
   });
 };
@@ -50,12 +27,10 @@ exports.createOrganization = (req, res) => {
 // but for now it just returns all the organizations
 exports.getOrganizations = (req, res) => {
   Organization.findAll()
-    .then((organizations) => {
-      res.json({ status: 202, data: { organizations } });
-    })
+    .then((organizations) => res.json({ status: 202, data: { organizations } }))
     .catch((error) => {
-      IRIS.critical("getOrganizations failed", { error }, ["api", "ise"]);
-      res.json({ status: 500, data: { errorCode: "internal_server_error" } });
+        console.log(error);
+        res.json({ status: 500, data: { errorCode: "ISE" } })
     });
 };
 
@@ -65,6 +40,7 @@ exports.removeOrganization = (req, res) => {
   Organization.destroy({ where: { oidn: req.params.oidn } })
     .then(() => res.json({ status: 202 }))
     .catch((error) => {
-      res.json({ status: 500, data: { errorCode: "internal_server_error" } });
+        console.log(error);
+        res.json({ status: 500, data: { errorCode: "ISE" } })
     });
 };
