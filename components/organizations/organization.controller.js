@@ -4,7 +4,7 @@ const postage = require("../../lib/postage/postage.utils");
 const IRIS = require("../../config/iris");
 
 exports.createOrganization = (req, res) => {
-  const ksn = req.headers["portal_ksn"] || 5524597201;
+  const ksn = req.headers["portal_ksn"] || 605249861408;
   const name = req.body.name;
   const admin_email = req.body.admin_email;
   const createdat = Date.now();
