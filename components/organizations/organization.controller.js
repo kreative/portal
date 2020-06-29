@@ -62,9 +62,7 @@ exports.getOrganizations = (req, res) => {
 exports.updateOrganization = (req, res) => {};
 
 exports.removeOrganization = (req, res) => {
-  const oidn = req.body.oidn;
-
-  Organization.destroy({ where: { oidn } })
+  Organization.destroy({ where: { oidn: req.params.oidn } })
     .then(() => res.json({ status: 202 }))
     .catch((error) => {
       res.json({ status: 500, data: { errorCode: "internal_server_error" } });

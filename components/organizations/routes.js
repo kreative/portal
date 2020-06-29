@@ -4,10 +4,10 @@ const router = express.Router();
 const verifyKey = require("../../middleware/VerifyKeyMiddleware");
 const organizations = require("./organization.controller");
 
-// router.get('/api/organizations', verifyKey, organizations.getOrganizations);
-// router.post('/api/organizations', verifyKey, organizations.createOrganization);
+// NEED TO ADD VERIFYKEY TO ALL ROUTES EVENTUALLY
 
 router.get('/api/organizations', organizations.getOrganizations);
 router.post('/api/organizations', organizations.createOrganization);
+router.delete('/api/organizations/:oidn', organizations.removeOrganization);
 
 module.exports = router;
