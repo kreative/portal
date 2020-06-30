@@ -45,10 +45,11 @@ exports.getAppchains = (req, res) => {
 
 exports.deleteAppchain = (req, res) => {
   Appchain.destroy({ where: { acn: req.params.acn } })
-    .catch((err) => {
-      res.json({ status: 500, data: { errorCode: "ISE" } });
-    })
     .then(() => {
       res.json({ status: 202 });
+    })
+    .catch((error) => {
+      console.log(error)
+      res.json({ status: 500, data: { errorCode: "ISE" } });
     });
 };
