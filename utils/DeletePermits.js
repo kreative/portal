@@ -19,9 +19,14 @@ exports.fromAIDN = (aidn) => {
     Permit.findAll({ where: { aidn } })
       .catch((error) => reject(error))
       .then((permits) => {
-        Promise.all(permits.map((p) => deletePermit(p)))
-          .catch((error) => reject(error))
-          .then((values) => resolve(values));
+        if (permits === null) {
+          resolve("NoPermitsFound");
+        }
+        else {
+          Promise.all(permits.map((p) => deletePermit(p)))
+            .catch((error) => reject(error))
+            .then((values) => resolve(values));
+        }
       });
   });
 };

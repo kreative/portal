@@ -50,6 +50,7 @@ exports.deleteAppchain = (req, res) => {
       res.json({ status: 404, data: { errorCode: "AppchainNotFound" } });
     })
     .then((appchain) => {
+      console.log(appchain)
       deletePermits
         .fromAIDN(appchain.aidn)
         .catch((error) => {
@@ -57,6 +58,7 @@ exports.deleteAppchain = (req, res) => {
           res.json({ status: 500, data: { errorCode: "ISE" } })
         })
         .then((values) => {
+          console.log(values)
           Appchain.destroy({ where: { acn: req.params.acn } })
             .then(() => res.json({ status: 202 }))
             .catch((error) => {

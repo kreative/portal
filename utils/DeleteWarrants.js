@@ -13,9 +13,14 @@ exports.fromPermitID = (permit_id) => {
     Warrant.findAll({ where: { permit_id } })
       .catch((error) => reject(error))
       .then((warrants) => {
-        Promise.all(warrants.map((w) => deleteWarrant(w)))
-          .catch((error) => reject(error))
-          .then((values) => resolve(values));
+        if (warrants === null) {
+          resolve("NoWarrantsFound");
+        }
+        else {
+          Promise.all(warrants.map((w) => deleteWarrant(w)))
+            .catch((error) => reject(error))
+            .then((values) => resolve(values));
+        }
       })
   })
 };
