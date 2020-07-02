@@ -1,6 +1,7 @@
 const Appchain = require("./appchain.model");
 const Organization = require("../organizations/organization.model");
 const generate = require("../../utils/Generate");
+const deletePermits = require("../../utils/DeletePermits");
 
 exports.createAppchain = (req, res) => {
   const name = req.body.name;
@@ -44,6 +45,11 @@ exports.getAppchains = (req, res) => {
 };
 
 exports.deleteAppchain = (req, res) => {
+
+  
+
+
+
   Appchain.destroy({ where: { acn: req.params.acn } })
     .then(() => {
       res.json({ status: 202 });
