@@ -16,10 +16,6 @@ const Certificate = DB.define('certificate', {
         type: Sequelize.BIGINT,
         allowNull: false,
     },
-    policies: {
-        type: Sequelize.ARRAY(Sequelize.TEXT),
-        allowNull: false,
-    },
     name: {
         type: Sequelize.TEXT,
         allowNull: false

@@ -45,17 +45,24 @@ exports.getAppchains = (req, res) => {
 };
 
 exports.deleteAppchain = (req, res) => {
-
-  
-
-
-
-  Appchain.destroy({ where: { acn: req.params.acn } })
-    .then(() => {
-      res.json({ status: 202 });
-    })
+  Appchain.find({ where: { acn: req.params.acn } })
     .catch((error) => {
-      console.log(error)
-      res.json({ status: 500, data: { errorCode: "ISE" } });
+      res.json({ status: 404, data: { errorCode: "AppchainNotFound" } });
+    })
+    .then((appchain) => {
+      deletePermits
+        .fromAIDN(appchain.aidn)
+        .catch((error) => {
+          console.log(error);
+          res.json({ status: 500, data: { errorCode: "ISE" } })
+        })
+        .then((values) => {
+          Appchain.destroy({ where: { acn: req.params.acn } })
+            .then(() => res.json({ status: 202 }))
+            .catch((error) => {
+              console.log(error);
+              res.json({ status: 500, data: { errorCode: "ISE" } });
+            });
+        });
     });
 };
