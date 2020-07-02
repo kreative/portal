@@ -45,7 +45,7 @@ exports.getAppchains = (req, res) => {
 };
 
 exports.deleteAppchain = (req, res) => {
-  Appchain.find({ where: { acn: req.params.acn } })
+  Appchain.findOne({ where: { acn: req.params.acn } })
     .catch((error) => {
       res.json({ status: 404, data: { errorCode: "AppchainNotFound" } });
     })
