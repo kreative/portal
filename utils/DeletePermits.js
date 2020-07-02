@@ -16,7 +16,7 @@ const deletePermit = (permit) => {
 
 exports.fromAIDN = (aidn) => {
   return new Promise((resolve, reject) => {
-    Permit.findAll({ where: { aidn } })
+    Permit.findAll({ where: { designated_app: aidn } })
       .catch((error) => reject(error))
       .then((permits) => {
         if (permits === null) {
