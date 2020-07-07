@@ -54,7 +54,7 @@ exports.getPermits = (req, res) => {
 
 // like the methods up adove, this is used by the Portal DevHub
 exports.updatePermit = (req, res) => {
-  const permit_id = req.body.permit_id;
+  const permit_id = req.params.permit_id;
   const description = req.body.description;
   const permit_token = req.body.permit_token;
   const scope = req.body.scope;
@@ -70,7 +70,7 @@ exports.updatePermit = (req, res) => {
 };
 
 exports.deactivatePermit = (req, res) => {
-  Permit.update({ active: false }, { where: { permit_id: req.body.permit_id } })
+  Permit.update({ active: false }, { where: { permit_id: req.params.permit_id } })
     .catch((error) => {
       console.log(error);
       res.json({ status: 500, data: { errorCode: "ISE" } });
@@ -81,7 +81,7 @@ exports.deactivatePermit = (req, res) => {
 };
 
 exports.deletePermit = (req, res) => {
-  Permit.destroy({ where: { permit_id: req.body.permit_id } })
+  Permit.destroy({ where: { permit_id: req.params.permit_id } })
     .catch((error) => {
       console.log(error);
       res.json({ status: 500, data: { errorCode: "ISE" } });
