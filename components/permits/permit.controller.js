@@ -11,7 +11,7 @@ exports.createPermit = (req, res) => {
   const permit_token = req.body.permit_token;
   const description = req.body.description;
   const scope = req.body.scope;
-  const issuing_ksn = res.locals.ksn;
+  const issuing_ksn = res.locals.ksn || 605249861408;
   const createdat = Date.now();
   const active = true;
 
