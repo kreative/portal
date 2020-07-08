@@ -70,7 +70,10 @@ exports.updatePermit = (req, res) => {
 };
 
 exports.deactivatePermit = (req, res) => {
-  Permit.update({ active: false }, { where: { permit_id: req.params.permit_id } })
+  Permit.update(
+    { active: false },
+    { where: { permit_id: req.params.permit_id } }
+  )
     .catch((error) => {
       console.log(error);
       res.json({ status: 500, data: { errorCode: "ISE" } });
@@ -81,7 +84,10 @@ exports.deactivatePermit = (req, res) => {
 };
 
 exports.activatePermit = (req, res) => {
-  Permit.update({ active: true }, { where: { permit_id: req.params.permit_id } })
+  Permit.update(
+    { active: true },
+    { where: { permit_id: req.params.permit_id } }
+  )
     .catch((error) => {
       console.log(error);
       res.json({ status: 500, data: { errorCode: "ISE" } });
@@ -98,6 +104,6 @@ exports.deletePermit = (req, res) => {
       res.json({ status: 500, data: { errorCode: "ISE" } });
     })
     .then(() => {
-      res.json({ status: 202, data: { update } });
+      res.json({ status: 202 });
     });
 };
