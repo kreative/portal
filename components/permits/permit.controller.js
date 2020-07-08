@@ -80,6 +80,17 @@ exports.deactivatePermit = (req, res) => {
     });
 };
 
+exports.activatePermit = (req, res) => {
+  Permit.update({ active: true }, { where: { permit_id: req.params.permit_id } })
+    .catch((error) => {
+      console.log(error);
+      res.json({ status: 500, data: { errorCode: "ISE" } });
+    })
+    .then((update) => {
+      res.json({ status: 202, data: { update } });
+    });
+};
+
 exports.deletePermit = (req, res) => {
   Permit.destroy({ where: { permit_id: req.params.permit_id } })
     .catch((error) => {
