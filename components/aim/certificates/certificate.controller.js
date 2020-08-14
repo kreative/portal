@@ -1,36 +1,28 @@
 const Certificate = require("./certificate.model");
 const generate = require("../../../utils/Generate");
 const verifyAIMCertificate = require("../../../utils/VerifyAIMCertificate");
-const IRIS = require("../../../config/iris");
 
 exports.createCertificate = (req, res) => {
   const description = req.body.description;
   const name = req.body.name;
   const createdat = Date.now();
 
-  validatePolicies(policies)
-    .catch((error) => {
-        console.log(error);
-        res.json({ status: 500, data: { errorCode: "ISE" } })
-    })
-    .then(() => {
-      generate.certificateID((certificate_id) => {
-        generate.identityToken((identity_token) => {
-          generate.accessToken((access_token) => {
-            Certificate.create({
-              certificate_id,
-              access_token,
-              identity_token,
-              name,
-              description,
-              createdat,
-            })
-              .catch((err) => res.json({ status: 500, data: { errorCode: "ISE" } }))
-              .then((certificate) => res.json({ status: 200, data: { certificate } }));
-          });
-        });
+  generate.certificateID((certificate_id) => {
+    generate.identityToken((identity_token) => {
+      generate.accessToken((access_token) => {
+        Certificate.create({
+          certificate_id,
+          access_token,
+          identity_token,
+          name,
+          description,
+          createdat,
+        })
+          .catch((err) => res.json({ status: 500, data: { errorCode: "ISE" } }))
+          .then((certificate) => res.json({ status: 200, data: { certificate } }));
       });
     });
+  });
 };
 
 exports.getCertificates = (req, res) => {
