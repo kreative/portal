@@ -33,6 +33,15 @@ exports.createCertificate = (req, res) => {
     });
 };
 
+exports.getCertificates = (req, res) => {
+  Certificate.findAll()
+    .then((certificates) => res.json({ status: 202, data: certificates }))
+    .catch((error) => {
+      console.log(error);
+      res.json({ status: 500, data: { errorCode: "ISE" } });
+    })
+};
+
 exports.getServiceKeys = (req, res) => {};
 
 exports.verifyCertificate = (req, res) => {
