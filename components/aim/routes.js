@@ -6,6 +6,6 @@ const certificates = require("./certificates/certificate.controller");
 router.get("/api/certificates", certificates.getCertificates);
 router.post("/api/certificates", certificates.createCertificate);
 router.post("/api/certificates/verify", certificates.verifyCertificate);
-router.delete("/api/certificates", certificates.deleteCertificate);
+router.delete("/api/certificates/:cert_id", certificates.deleteCertificate);
 
 module.exports = router;

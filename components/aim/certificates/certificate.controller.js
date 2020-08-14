@@ -46,7 +46,7 @@ exports.verifyCertificate = (req, res) => {
 };
 
 exports.deleteCertificate = (req, res) => {
-  Certificate.destroy({ where: { certificate_id: req.body.certificate_id } })
+  Certificate.destroy({ where: { certificate_id: req.params.cert_id } })
     .catch((err) => res.json({ status: 500, data: { errorCode: "ISE" } }))
     .then(() => res.json({ status: 202 }));
 };
