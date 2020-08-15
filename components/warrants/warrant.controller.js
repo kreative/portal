@@ -3,7 +3,6 @@ const Permit = require("../permits/permit.model");
 const generate = require("../../utils/Generate");
 const IRIS = require("../../config/iris");
 
-
 exports.createWarrant = (req, res) => {
     const ksn = req.body.ksn;
     const issuing_app = res.locals.calling_aidn;
@@ -11,16 +10,12 @@ exports.createWarrant = (req, res) => {
     const active = true;
     const createdat = Date.now();
 
-    IRIS.info("createWarrant started",{ksn,issuing_app,permit_token},["api"]);
-
     Permit.findOne({where:{permit_token}})
     .catch(err => {
-        IRIS.critical("Permit.findOne failed, it shouldnt",{permit_token,ksn,err},["api","ise"]);
-        res.json({status:500, data:{errorCode:"internal_server_error"}});
+        res.json({status:500, data:{errorCode:"ISE"}});
     })
     .then(permit => {
         if (permit === null) {
-            IRIS.warn("permit wasnt found using permit_token",{permit_token,ksn},["api"]);
             res.json({status:404, data:{errorCode:"permit_not_found"}});
         }
         else {
@@ -36,11 +31,9 @@ exports.createWarrant = (req, res) => {
                     createdat
                 })
                 .catch(err => {
-                    IRIS.critical("Warrant.create failed",{warrant_id,permit_token,err},["api","ise"]);
-                    res.json({status:500, data:{errorCode:"internal_server_error"}});
+                    res.json({status:500, data:{errorCode:"ISE"}});
                 })
                 .then(warrant => {
-                    IRIS.info("warrant created successfully",{warrant},["api","success"]);
                     res.json({status:202, data:{warrant}});
                 });
             });
@@ -58,12 +51,10 @@ exports.checkForWarrant = (req, res) => {
 
     Permit.findOne({where: {permit_token}})
     .catch(err => {
-        IRIS.critical("Permit.findOne failed",{ksn,permit_token,err},["api","ise"]);
-        res.json({status:500, data:{errorCode:"internal_server_error"}});
+        res.json({status:500, data:{errorCode:"ISE"}});
     })
     .then(permit => {
         if (permit === null) {
-            IRIS.info("permit not found perfectly",{ksn,permit_token},["api","success"]);
             res.json({status:404, data:{errorCode:"permit_not_found"}});
         }
         else {
@@ -71,18 +62,14 @@ exports.checkForWarrant = (req, res) => {
 
             Warrant.findOne({where: {ksn, permit_id, active}})
             .catch(err => {
-                IRIS.critical("Warrant.findOne failed",{ksn,permit_token,err},["api","ise"]);
-                res.json({status:500, data:{errorCode:"internal_server_error"}});
+                res.json({status:500, data:{errorCode:"ISE"}});
             })
             .then(warrant => {
                 if (warrant === null) {
-                    IRIS.info("warrant not found perfectly",{ksn,permit_token},["api","success"]);
                     res.json({status:202, data:{has_warrant: false}});
                 }
                 else {
                     const warrant_id = warrant.warrant_id;
-
-                    IRIS.info("warrant was found perfectly",{warrant_id,ksn,permit_token},["api","success"]);
                     res.json({status:202, data:{has_warrant: true, warrant}});
                 }
             });
@@ -91,23 +78,22 @@ exports.checkForWarrant = (req, res) => {
 };
 
 
+exports.getWarrants = (req, res) => {
+    Warrant.findAll()
+      .catch((error) => res.json({ status:500, data: { errorCode:"ISE" }}))
+      .then((warrants) => res.json({ status:202, data: warrants }))
+}
+
+
 // returns only the warrants for the app calling this request
 // for a given KSN
 exports.getWarrantsForAccount = (req, res) => {
     const ksn = req.body.ksn;
     const issuing_app = res.locals.calling_aidn;
 
-    IRIS.info("getting warrant for account started",{ksn,issuing_app},["api"]);
-
     Warrant.findAll({where:{ksn,issuing_app}})
-    .catch(err => {
-        IRIS.critical("Warrant.findAll failed",{ksn,issuing_app,err},["api","ise"]);
-        res.json({status:500, data:{errorCode:"internal_server_error"}});
-    })
-    .then(warrants => {
-        IRIS.info("warrants were found perfectly",{ksn,issuing_app},["api","success"]);
-        res.json({status:202, data:{warrants}});
-    });
+      .catch(err => res.json({status:500, data:{errorCode:"ISE"}}))
+      .then(warrants => res.json({status:202, data:{warrants}}));
 };
 
 
@@ -116,17 +102,9 @@ exports.getWarrantsForAccount = (req, res) => {
 exports.getWarrantsForApp = (req, res) => {
     const issuing_app = req.body.issuing_app;
 
-    IRIS.info("get warrants for app started",{issuing_app},["api"]);
-
     Warrant.findAll({where:{issuing_app}})
-    .catch(err => {
-        IRIS.critical("Warrant.findAll failed @ForApp",{issuing_app,err},["api","ise"]);
-        res.json({status:500, data:{errorCode:"internal_server_error"}});
-    })
-    .then(warrants => {
-        IRIS.info("warrants were found perfectly @ForApp",{issuing_app},["api","success"]);
-        res.json({status:202, data:{warrants}});
-    });
+      .catch(err => res.json({status:500, data:{errorCode:"ISE"}}))
+      .then(warrants => res.json({status:202, data:{warrants}}));
 };
 
 
@@ -137,15 +115,11 @@ exports.deactivateWarrant = (req, res) => {
     const warrant_id = req.body.warrant_id;
     const active = false;
 
-    IRIS.info("deactivate warrant started",{warrant_id},["api"]);
-
     Warrant.update({active},{where:{warrant_id}})
-    .catch(err => {
-        IRIS.critical("Warrant.update failed @deactivate",{warrant_id,err},["api","ise"]);
-        res.json({status:500, data:{errorCode:"internal_server_error"}});
+    .catch((err) => {
+        res.json({status:500, data:{errorCode:"ISE"}});
     })
-    .then(update => {
-        IRIS.info("warrant was deactivated perfectly",{warrant_id},["api","success"]);
+    .then((update) => {
         res.json({status:202, data:{deactivated:true}});
     });
 };
