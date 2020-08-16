@@ -6,6 +6,7 @@ const Organization = require("../components/organizations/organization.model");
 const Permit = require("../components/permits/permit.model");
 const Certificate = require("../components/aim/certificates/certificate.model");
 const Warrant = require("../components/warrants/warrant.model");
+const Session = require("../components/sessions/session.model");
 
 exports.acn = (callback) => {
     const newACN = parseInt(generate("123456789", 1) + generate("1234567890", 15));
@@ -13,7 +14,7 @@ exports.acn = (callback) => {
     Appchain.findOne({where: {acn: newACN}})
     .then(appchain => {
         if (appchain === null) callback(newACN);
-        else this.acn();
+        else this.acn(callback);
     });
 };
 
@@ -23,7 +24,7 @@ exports.aidn = (callback) => {
     Appchain.findOne({where: {aidn: newAIDN}})
     .then(appchain => {
         if (appchain === null) callback(newAIDN);
-        else this.aidn();
+        else this.aidn(callback);
     });
 };
 
@@ -33,7 +34,7 @@ exports.ccn = (callback) => {
     Keychain.findOne({where: {ccn: newCCN}})
     .then(keychain => {
         if (keychain === null) callback(newCCN);
-        else this.ccn();
+        else this.ccn(callback);
     });
 };
 
@@ -43,7 +44,7 @@ exports.ksn = (callback) => {
     Account.findOne({where: {ksn: newKSN}})
     .then(account => {
         if (account === null) callback(newKSN);
-        else this.ksn();
+        else this.ksn(callback);
     });
 };
 
@@ -53,7 +54,7 @@ exports.oidn = (callback) => {
     Organization.findOne({where: {oidn: newOIDN}})
     .then(organization => {
         if (organization === null) callback(newOIDN);
-        else this.oidn();
+        else this.oidn(callback);
     });
 };
 
@@ -63,7 +64,7 @@ exports.permitID = (callback) => {
     Permit.findOne({where: {permit_id: newPermitID}})
     .then(permit => {
         if (permit === null) callback(newPermitID);
-        else this.permitID();
+        else this.permitID(callback);
     });
 };
 
@@ -73,7 +74,7 @@ exports.certificateID = (callback) => {
     Certificate.findOne({where: {certificate_id: newID}})
     .then(certificate => {
         if (certificate === null) callback(newID);
-        else this.certificateID();
+        else this.certificateID(callback);
     });
 };
 
@@ -83,7 +84,7 @@ exports.identityToken = (callback) => {
     Certificate.findOne({where: {identity_token: newToken}})
     .then(certificate => {
         if (certificate === null) callback(newToken);
-        else this.identityToken();
+        else this.identityToken(callback);
     })
 };
 
@@ -93,7 +94,7 @@ exports.accessToken = (callback) => {
     Certificate.findOne({where: {access_token: newToken}})
     .then(certificate => {
         if (certificate === null) callback(newToken);
-        else this.accessToken();
+        else this.accessToken(callback);
     })
 };
 
@@ -103,6 +104,16 @@ exports.warrantID = (callback) => {
     Warrant.findOne({where: {warrant_id: newWarrantID}})
     .then(warrant => {
         if (warrant === null) callback(newWarrantID);
-        else this.warrantID();
+        else this.warrantID(callback);
     });
 };
+
+exports.sessionID = (callback) => {
+    const newSessionId = parseInt(generate("123456789", 1) + generate("1234567890", 11));
+
+    Session.findOne({ where: { session_id: newSessionId } })
+      .then((session) => {
+          if (session === null) callback(newSessionId);
+          else this.sessionID(callback);
+      });
+}
