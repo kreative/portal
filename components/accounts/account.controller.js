@@ -180,8 +180,14 @@ exports.updateAccount = (req, res) => {
     const fname = req.body.fname;
     const lname = req.body.lname;
     const username = req.body.username;
+    const profile_picture = req.body.profile_picture;
 
-    Account.update({fname,lname,username}, {where:ksn})
+    Account.update({
+        fname,
+        lname,
+        username,
+        profile_picture,
+    }, {where:ksn})
     .catch(err => {
         console.log(err);
          res.json({status:500, data:{errorCode:"internal_server_error"}});
