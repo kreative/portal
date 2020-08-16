@@ -22,9 +22,12 @@ const Keychain = DB.define('keychain', {
         type: Sequelize.TEXT,
         allowNull: false
     },
+    expire_by: {
+        type: Sequelize.BIGINT,
+    },
     expired: {
         type: Sequelize.BOOLEAN,
-        allowNull: false
+        allowNull: false,
     },
     createdat: {
         type: Sequelize.BIGINT,
