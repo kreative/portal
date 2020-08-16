@@ -8,6 +8,7 @@ const organizations = require("./organization.controller");
 
 router.get('/api/organizations', organizations.getOrganizations);
 router.post('/api/organizations', organizations.createOrganization);
+router.post('/api/organization', organizations.updateOrganization);
 router.delete('/api/organizations/:oidn', organizations.removeOrganization);
 
 module.exports = router;

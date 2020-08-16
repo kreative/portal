@@ -33,7 +33,10 @@ exports.getOrganizations = (req, res) => {
 };
 
 exports.updateOrganization = (req, res) => {
-  Organization.update({ req.body.organization })
+  Organization.update({
+    name: req.body.name,
+    admin_email: req.body.admin_email,
+  })
     .then((update) => res.json({ status: 200 }))
     .catch((err) => {
       console.log(err);
