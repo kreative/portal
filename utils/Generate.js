@@ -6,7 +6,7 @@ const Organization = require("../components/organizations/organization.model");
 const Permit = require("../components/permits/permit.model");
 const Certificate = require("../components/aim/certificates/certificate.model");
 const Warrant = require("../components/warrants/warrant.model");
-const Session = require("../components/sessions/session.model");
+const Session = require("../lib/sessions/session.model");
 
 exports.acn = (callback) => {
     const newACN = parseInt(generate("123456789", 1) + generate("1234567890", 15));
