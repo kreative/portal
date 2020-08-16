@@ -23,8 +23,6 @@ exports.createOrganization = (req, res) => {
   });
 };
 
-// returns list of organizations belonging to a KSN
-// but for now it just returns all the organizations
 exports.getOrganizations = (req, res) => {
   Organization.findAll()
     .then((organizations) => res.json({ status: 202, data: { organizations } }))
@@ -34,7 +32,14 @@ exports.getOrganizations = (req, res) => {
     });
 };
 
-exports.updateOrganization = (req, res) => {};
+exports.updateOrganization = (req, res) => {
+  Organization.update({ req.body.organization })
+    .then((update) => res.json({ status: 200 }))
+    .catch((err) => {
+      console.log(err);
+      res.json({ status: 500, data: { errorCode: "ISE" } });
+    });
+};
 
 exports.removeOrganization = (req, res) => {
   Organization.destroy({ where: { oidn: req.params.oidn } })
