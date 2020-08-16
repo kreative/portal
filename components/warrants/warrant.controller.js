@@ -1,7 +1,6 @@
 const Warrant = require("./warrant.model");
 const Permit = require("../permits/permit.model");
 const generate = require("../../utils/Generate");
-const IRIS = require("../../config/iris");
 
 exports.createWarrant = (req, res) => {
     const ksn = req.body.ksn;
@@ -20,7 +19,6 @@ exports.createWarrant = (req, res) => {
         }
         else {
             const permit_id = permit.permit_id;
-
             generate.warrantID(warrant_id => {
                 Warrant.create({
                     warrant_id,
