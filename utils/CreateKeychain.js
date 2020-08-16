@@ -12,6 +12,9 @@ const createKeychain = (ksn, aidn) => {
     const key = jwt.sign({ksn, aidn, secureHash, time}, SECRET);
     const expired = false;
     const createdat = Date.now();
+    const d = new Date();
+    const e = d.setDate(d.getDate() + 30)
+    const expire_by = e.getTime();
 
     return new Promise((resolve, reject) => {
         generate.ccn(ccn => {
@@ -21,10 +24,11 @@ const createKeychain = (ksn, aidn) => {
                 aidn,
                 key,
                 expired,
+                expire_by,
                 createdat
             })
-            .then(keychain => resolve(keychain.key))
-            .catch(error => reject(error));
+                .then(keychain => resolve(keychain.key))
+                .catch(error => reject(error));
         });
     });
 };
