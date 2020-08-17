@@ -25,6 +25,7 @@ const organizationRoutes = require("./components/organizations/routes");
 const permitRoutes = require("./components/permits/routes");
 const warrantRoutes = require("./components/warrants/routes");
 const aimRoutes = require("./components/aim/routes");
+const sessionRoutes = require("./lib/sessions/sessions.routes");
 
 const getIPMiddleware = require("./middleware/GetIP");
 const lookupIPInfoMiddleware = require("./middleware/LookupIPInfo");
@@ -53,6 +54,7 @@ server.use(organizationRoutes);
 server.use(permitRoutes);
 server.use(warrantRoutes);
 server.use(aimRoutes);
+server.use(sessionRoutes);
 
 server.use(Sentry.Handlers.errorHandler());
 
