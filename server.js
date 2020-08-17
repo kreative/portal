@@ -59,5 +59,8 @@ server.use(sessionRoutes);
 server.use(Sentry.Handlers.errorHandler());
 
 DB.authenticate()
-.then(() => server.listen(PORT, IRIS.info(`portal online::::${PORT}`,{},[])))
-.catch(err => IRIS.error("Portal DB failed to connect", err, ["database"]));
+  .then(() => {
+    console.log(PORT)
+    server.listen(PORT);
+  })
+  .catch(err => console.log(err));
