@@ -9,6 +9,8 @@ const createResetCode = require("../../utils/CreateResetCode");
 const postage = require("../../lib/postage/postage.utils");
 const verifyKey = require("../../utils/VerifyKey");
 const ev = require("../../utils/EmailVerificationKit");
+const sessions = require("../../lib/sessions/sessions");
+const Sessions = new sessions();
 
 
 exports.getLoginPage = (req, res) => {
@@ -44,6 +46,7 @@ exports.verifyKey = (req, res) => {
     verifyKey(key, ksn, aidn)
     .then(info => {
         const ccn = info.ccn;
+        Sessions.createSession("KeyVerification", "", ksn);
         res.json({status:202, data:{ccn,ksn,aidn}});
     })
     .catch(err => {
@@ -106,6 +109,7 @@ exports.signup = (req, res) => {
                     console.log(err);
                 }
                 finally {
+                    Sessions.createSession("Registered", "", ksn);
                     res.json({status: 202, data: {key}});
                 }
             });
@@ -127,6 +131,7 @@ exports.verifyEmail = (req, res) => {
             res.json({status:500, data:{errorCode:"internal_server_error"}});
         })
         .then(update => {
+            Sessions.createSession("EmailVerification", "", ksn);
             res.json({status:202});
         });
     });
@@ -162,6 +167,7 @@ exports.login = (req, res) => {
                             console.log(err);
                         }
                         finally {
+                            Sessions.createSession("Login", "", account.ksn);
                             res.json({status: 202, data: {key}});
                         }
                     });
@@ -190,7 +196,8 @@ exports.updateAccount = (req, res) => {
     }, {where:ksn})
     .catch(err => {
         console.log(err);
-         res.json({status:500, data:{errorCode:"internal_server_error"}});
+        Sessions.createSession("AccountUpdate", "", ksn);
+        res.json({status:500, data:{errorCode:"internal_server_error"}});
     })
     .then(update => {
         res.json({status:200});
@@ -217,6 +224,7 @@ exports.updateAccountEmail = (req, res) => {
             console.log(err);
         }
         finally {
+            Sessions.createSession("AccountEmailUpdate", "", ksn);
             res.json({status:202});
         }
     })
@@ -226,14 +234,22 @@ exports.updateAccountEmail = (req, res) => {
 exports.logout = (req, res) => {
     const ccn = res.locals.ccn;
 
-    Keychain.update({expired: true},{where: {ccn}})
-    .catch(err => {
-        console.log(err);
-        res.json({status: 500, data:{errorCode:"internal_server_error"}});
-    })
-    .then(update => {
-        res.json({status: 202});
-    });
+    Keychain.find({where:{ccn}})
+      .catch((err) => {
+          console.log(err);
+          res.json({status: 500, data: { errorCode: "ISE" }});
+      })
+      .then((keychain) => {
+          Keychain.update({expired: true},{where: {ccn}})
+            .catch((err) => {
+                console.log(err);
+                res.json({status: 500, data:{errorCode:"ISE"}});
+            })
+            .then(update => {
+                Sessions.createSession("Logout", "", keychain.ksn);
+                res.json({ status: 202 });
+            });
+      });
 };
 
 
@@ -241,7 +257,7 @@ exports.requestPasswordResetCode = (req, res) => {
     const username = req.body.username;
     const deliveryType = req.body.delivery_type;
 
-    Account.findOne({where: {username}})
+    Account.findOne({where: { username }})
     .then(account => {
         const ksn = account.ksn;
         if (account === null) {
@@ -266,6 +282,7 @@ exports.requestPasswordResetCode = (req, res) => {
                         res.json({status: 500, data: {errorCode: "internal_server_error", error: err}});
                     }
                     finally {
+                        Sessions.createSession("PasswordResetCodeRequest", "", account.ksn);
                         res.json({status: 202, data: {email: account.email}});
                     }
                 }
@@ -298,6 +315,7 @@ exports.verifyResetCode = (req, res) => {
                         res.json({status:500, data:{errorCode:"internal_server_error"}});
                     })
                     .then(() => {
+                        Sessions.createSession("ResetCodeVerification", "", ksn);
                         res.json({status: 202, data: {ksn}});
                     });
                 }
@@ -339,6 +357,7 @@ exports.resetPassword = (req, res) => {
                     console.log(err);
                 }
                 finally {
+                    Sessions.createSession("PasswordReset", "", ksn);
                     res.json({status: 202});
                 }
             });
