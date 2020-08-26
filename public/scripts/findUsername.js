@@ -37,7 +37,7 @@ function findUsername() {
                     $("#findusername-btn").addClass("hidden");
                     $("#gotologin-btn").removeClass("hidden");
                     $("h1").text(fname+", we found it!");
-                    $(".subtitle").text("Your username is '"+username);
+                    $(".subtitle").text("Your username is '"+username+"'");
                     
                 }
             });
